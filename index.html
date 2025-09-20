@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>果敢的狂电猴 - 主页 - 2.1</title>
+    <title>果敢的狂电猴 - 主页 - 2.2</title>
     <link rel="icon" href="果敢的狂电猴头.png" type="image/png">
     <!-- 引入Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,6 +21,8 @@
                         accent: '#FFEA00', // 更鲜艳的亮黄色作为强调色
                         dark: '#121212', // 深色背景
                         light: '#E0E0E0', // 浅色文本
+                        purpleLight: '#9C27B0', // 稍浅的紫色，用于渐变
+                        purpleDark: '#7B1FA2',  // 稍深的紫色，用于渐变
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -255,14 +257,30 @@
             transform: translateY(-5px);
             box-shadow: 0 0 0 5px rgba(176, 38, 255, 0.4), 0 0 15px 5px rgba(176, 38, 255, 0.2);
         }
+
+        /* 导航栏渐变紫色样式 - 100%不透明度 */
+        #navbar {
+            background: linear-gradient(135deg, #7B1FA2 0%, #B026FF 100%);
+            backdrop-filter: blur-md;
+        }
+
+        /* 下拉菜单保持协调的渐变紫色 - 100%不透明度 */
+        #desktop-menu, #about-menu, #mobile-menu, #mobile-menutwo {
+            background: linear-gradient(135deg, #7B1FA2 0%, #B026FF 100%);
+        }
+
+        /* 滚动时导航栏的渐变调整 - 100%不透明度 */
+        #navbar.scrolled {
+            background: linear-gradient(135deg, #7B1FA2 0%, #B026FF 100%);
+        }
     </style>
 </head>
 <body class="font-sans">
     <!-- 导航栏 - 合并为一个"导航"并添加图标 -->
-    <header id="navbar" class="fixed w-full z-50 transition-all duration-300 bg-dark/80 backdrop-blur-md">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+    <header id="navbar" class="fixed w-full z-50 transition-all duration-300">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
             <a href="https://space.bilibili.com/3546703787461385?spm_id_from=333.1007.0.0" class="flex items-center space-x-2 group">
-                <div class="w-10 h-10 flex items-center justify-center rounded-full bg-primary/20 group-hover:bg-primary/30 transition-all duration-300">
+                <div class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 group-hover:bg-white/30 transition-all duration-300">
                     <img src="果敢的狂电猴头.png" alt="果敢的狂电猴头像" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
                 </div>
                 <h1 class="text-xl md:text-2xl font-display text-white group-hover:text-accent transition-colors duration-300">果敢的狂电猴</h1>
@@ -275,7 +293,7 @@
                     <button id="nav-toggle" class="text-white hover:text-accent transition-colors flex items-center">
                     <i class="fa fa-compass mr-2"></i>导航                              
                     </button>
-                    <div id="desktop-menu" class="hidden absolute top-full right-0 mt-2 w-48 bg-dark/95 backdrop-blur-md rounded-lg shadow-xl py-2">
+                    <div id="desktop-menu" class="hidden absolute top-full right-0 mt-2 w-48 backdrop-blur-md rounded-lg shadow-xl py-2">
                         <a href="#minecraft-mods" class="block px-4 py-2 text-white hover:text-accent transition-colors">《我的世界》Mod</a>
                         <a href="#utilities" class="block px-4 py-2 text-white hover:text-accent transition-colors">实用工具</a>
                         <a href="#indie-games" class="block px-4 py-2 text-white hover:text-accent transition-colors">独立游戏</a>
@@ -288,7 +306,7 @@
                     <button id="about-toggle" class="text-white hover:text-accent transition-colors flex items-center">
                     <i class="fa fa-info-circle mr-2"></i>关于                              
                     </button>
-                    <div id="about-menu" class="hidden absolute top-full right-0 mt-2 w-48 bg-dark/95 backdrop-blur-md rounded-lg shadow-xl py-2">
+                    <div id="about-menu" class="hidden absolute top-full right-0 mt-2 w-48 backdrop-blur-md rounded-lg shadow-xl py-2">
                         <a href="privacy-policy.html" class="block px-4 py-2 text-white hover:text-accent transition-colors">隐私政策</a>
                         <a href="contact.html" class="block px-4 py-2 text-white hover:text-accent transition-colors">联系作者</a>
                     </div>
@@ -306,7 +324,7 @@
         </div>
         
         <!-- 移动端导航菜单 -->
-        <div id="mobile-menu" class="hidden md:hidden bg-dark/95 backdrop-blur-md">
+        <div id="mobile-menu" class="hidden md:hidden backdrop-blur-md">
             <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
                 <a href="#minecraft-mods" class="text-white hover:text-accent transition-colors py-2">我的世界Mod</a>
                 <a href="#utilities" class="text-white hover:text-accent transition-colors py-2">实用工具</a>
@@ -316,7 +334,7 @@
         </div>
     </header>
 
-        <div id="mobile-menutwo" class="hidden md:hidden bg-dark/95 backdrop-blur-md">
+        <div id="mobile-menutwo" class="hidden md:hidden backdrop-blur-md">
             <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
                 <a href="" class="text-white hover:text-accent transition-colors py-2">水代码</a>
                 <a href="privacy-policy.html" class="text-white hover:text-accent transition-colors py-2">隐私政策</a>
@@ -716,11 +734,9 @@
         window.addEventListener('scroll', function() {
             const navbar = document.getElementById('navbar');
             if (window.scrollY > 50) {
-                navbar.classList.add('py-2', 'bg-dark/90');
-                navbar.classList.remove('py-3', 'bg-dark/80');
+                navbar.classList.add('py-1', 'scrolled');
             } else {
-                navbar.classList.add('py-3', 'bg-dark/80');
-                navbar.classList.remove('py-2', 'bg-dark/90');
+                navbar.classList.remove('py-1', 'scrolled');
             }
             
             // 控制返回顶部按钮显示/隐藏
