@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>果敢的狂电猴 - 主页 - 2.2</title>
+    <title>果敢的狂电猴 - 主页 - 2.3</title>
     <link rel="icon" href="果敢的狂电猴头.png" type="image/png">
     <!-- 引入Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -23,6 +23,12 @@
                         light: '#E0E0E0', // 浅色文本
                         purpleLight: '#9C27B0', // 稍浅的紫色，用于渐变
                         purpleDark: '#7B1FA2',  // 稍深的紫色，用于渐变
+                        deepPurple: {
+                            950: '#120033', // 极深紫色
+                            900: '#1A004B', // 更深紫色
+                            800: '#2A006E', // 深紫色
+                            700: '#3A0088', // 中深紫色
+                        }
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
@@ -255,23 +261,23 @@
         
         #back-to-top:hover {
             transform: translateY(-5px);
-            box-shadow: 0 0 0 5px rgba(176, 38, 255, 0.4), 0 0 15px 5px rgba(176, 38, 255, 0.2);
+            box-shadow: 0 0 0 5px rgba(26, 0, 75, 0.4), 0 0 15px 5px rgba(26, 0, 75, 0.2);
         }
 
-        /* 导航栏渐变紫色样式 - 100%不透明度 */
+        /* 导航栏渐变深紫色样式 - 更深的紫色 */
         #navbar {
-            background: linear-gradient(135deg, #7B1FA2 0%, #B026FF 100%);
+            background: linear-gradient(135deg, #120033 0%, #1A004B 100%);
             backdrop-filter: blur-md;
         }
 
-        /* 下拉菜单保持协调的渐变紫色 - 100%不透明度 */
+        /* 下拉菜单保持协调的渐变深紫色 */
         #desktop-menu, #about-menu, #mobile-menu, #mobile-menutwo {
-            background: linear-gradient(135deg, #7B1FA2 0%, #B026FF 100%);
+            background: linear-gradient(135deg, #120033 0%, #1A004B 100%);
         }
 
-        /* 滚动时导航栏的渐变调整 - 100%不透明度 */
+        /* 滚动时导航栏的渐变调整 */
         #navbar.scrolled {
-            background: linear-gradient(135deg, #7B1FA2 0%, #B026FF 100%);
+            background: linear-gradient(135deg, #120033 0%, #1A004B 100%);
         }
     </style>
 </head>
