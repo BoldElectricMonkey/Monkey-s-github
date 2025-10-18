@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>花果山网页</title>
+  <!-- 引入Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- 引入Font Awesome -->
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- 配置Tailwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#3B82F6',
+            secondary: '#10B981',
+            accent: '#F59E0B',
+            dark: {
+              100: '#374151',
+              200: '#1F2937',
+              300: '#111827',
+              400: '#030712'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .content-auto {
+        content-visibility: auto;
+      }
+      .card-hover {
+        @apply transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/20;
+      }
+      .input-focus {
+        @apply focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none;
+      }
+      .btn-effect {
+        @apply transform transition-transform duration-200 active:scale-95;
+      }
+    }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-dark-400 to-dark-300 min-h-screen text-gray-100 font-sans">
+  <!-- 页面容器 -->
+  <div class="container mx-auto px-4 py-8 max-w-6xl">
+    <!-- 标题区域 -->
+    <header class="mb-10 text-center">
+      <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary mb-2">
+        花果山网页
+      </h1>
+      <p class="text-gray-400 text-lg">快捷访问您喜爱的网站</p>
+    </header>
+    
+    <!-- 功能按钮区 -->
+    <div class="flex justify-end mb-6">
+      <button id="newTabBtn" class="px-5 py-2 bg-accent hover:bg-accent/90 text-white rounded-lg font-medium btn-effect flex items-center">
+        <i class="fa fa-window-maximize mr-2"></i>新增标签页
+      </button>
+    </div>
+    
+    <!-- 添加网站表单 -->
+    <div class="bg-dark-200 rounded-xl p-6 mb-10 shadow-lg">
+      <h2 class="text-xl font-semibold mb-4 flex items-center">
+        <i class="fa fa-plus-circle text-primary mr-2"></i>添加新网页
+      </h2>
+      <form id="addWebsiteForm" class="flex flex-col md:flex-row gap-4">
+        <div class="flex-1">
+          <label for="websiteUrl" class="block text-sm font-medium text-gray-300 mb-1">网页地址</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+              <i class="fa fa-link"></i>
+            </span>
+            <input 
+              type="url" 
+              id="websiteUrl" 
+              placeholder="https://example.com" 
+              required
+              class="w-full pl-10 pr-4 py-3 bg-dark-100 border border-gray-700 rounded-lg input-focus text-gray-100"
+            >
+          </div>
+        </div>
+        <div class="flex-1">
+          <label for="websiteName" class="block text-sm font-medium text-gray-300 mb-1">网站名称（可选）</label>
+          <div class="relative">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+              <i class="fa fa-tag"></i>
+            </span>
+            <input 
+              type="text" 
+              id="websiteName" 
+              placeholder="例如：示例网站" 
+              class="w-full pl-10 pr-4 py-3 bg-dark-100 border border-gray-700 rounded-lg input-focus text-gray-100"
+            >
+          </div>
+        </div>
+        <div class="flex items-end">
+          <button 
+            type="submit" 
+            class="w-full md:w-auto px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-lg font-medium btn-effect flex items-center justify-center"
+          >
+            <i class="fa fa-plus mr-2"></i>添加
+          </button>
+        </div>
+      </form>
+    </div>
+    
+    <!-- 实用网站导航区域 -->
+    <section class="mb-12">
+      <h2 class="text-xl font-semibold mb-6 flex items-center">
+        <i class="fa fa-th-large text-accent mr-2"></i>实用网站导航
+      </h2>
+      <div id="commonWebsitesContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- 预设实用网站卡片 -->
+        <div class="bg-dark-200 rounded-xl overflow-hidden shadow-md card-hover">
+          <a href="https://www.doubao.com" target="_blank" class="block h-full">
+            <div class="h-2 bg-primary"></div>
+            <div class="p-6 flex flex-col items-center text-center">
+              <div class="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center mb-4">
+                <i class="fa fa-comments text-2xl text-primary"></i>
+              </div>
+              <h3 class="text-lg font-semibold mb-1">豆包网页版</h3>
+              <p class="text-sm text-gray-400 truncate w-full">https://www.doubao.com</p>
+            </div>
+          </a>
+        </div>
+        
+        <div class="bg-dark-200 rounded-xl overflow-hidden shadow-md card-hover">
+          <a href="https://www.douyin.com" target="_blank" class="block h-full">
+            <div class="h-2 bg-red-500"></div>
+            <div class="p-6 flex flex-col items-center text-center">
+              <div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mb-4">
+                <i class="fa fa-music text-2xl text-red-500"></i>
+              </div>
+              <h3 class="text-lg font-semibold mb-1">抖音网页版</h3>
+              <p class="text-sm text-gray-400 truncate w-full">https://www.douyin.com</p>
+            </div>
+          </a>
+        </div>
+        
+        <div class="bg-dark-200 rounded-xl overflow-hidden shadow-md card-hover">
+          <a href="https://www.bilibili.com" target="_blank" class="block h-full">
+            <div class="h-2 bg-pink-500"></div>
+            <div class="p-6 flex flex-col items-center text-center">
+              <div class="w-16 h-16 rounded-full bg-pink-500/20 flex items-center justify-center mb-4">
+                <i class="fa fa-play-circle text-2xl text-pink-500"></i>
+              </div>
+              <h3 class="text-lg font-semibold mb-1">哔哩哔哩网页版</h3>
+              <p class="text-sm text-gray-400 truncate w-full">https://www.bilibili.com</p>
+            </div>
+          </a>
+        </div>
+        
+        <div class="bg-dark-200 rounded-xl overflow-hidden shadow-md card-hover">
+          <a href="https://www.ixigua.com" target="_blank" class="block h-full">
+            <div class="h-2 bg-blue-500"></div>
+            <div class="p-6 flex flex-col items-center text-center">
+              <div class="w-16 h-16 rounded-full bg-blue-500/20 flex items-center justify-center mb-4">
+                <i class="fa fa-video-camera text-2xl text-blue-500"></i>
+              </div>
+              <h3 class="text-lg font-semibold mb-1">西瓜视频网页版</h3>
+              <p class="text-sm text-gray-400 truncate w-full">https://www.ixigua.com</p>
+            </div>
+          </a>
+        </div>
+        
+        <div class="bg-dark-200 rounded-xl overflow-hidden shadow-md card-hover">
+          <a href="https://poki.com" target="_blank" class="block h-full">
+            <div class="h-2 bg-purple-500"></div>
+            <div class="p-6 flex flex-col items-center text-center">
+              <div class="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center mb-4">
+                <i class="fa fa-gamepad text-2xl text-purple-500"></i>
+              </div>
+              <h3 class="text-lg font-semibold mb-1">Poki小游戏</h3>
+              <p class="text-sm text-gray-400 truncate w-full">https://poki.com</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 电脑课常用网页区域 -->
+    <section class="mb-12">
+      <h2 class="text-xl font-semibold mb-6 flex items-center">
+        <i class="fa fa-laptop text-green-400 mr-2"></i>电脑课常用网页
+      </h2>
+      <div id="computerClassWebsitesContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- 电脑课常用网站卡片 -->
+        <div class="bg-dark-200 rounded-xl overflow-hidden shadow-md card-hover">
+          <a href="https://bbsmc.net/software/pcl" target="_blank" class="block h-full">
+            <div class="h-2 bg-teal-500"></div>
+            <div class="p-6 flex flex-col items-center text-center">
+              <div class="w-16 h-16 rounded-full bg-teal-500/20 flex items-center justify-center mb-4">
+                <i class="fa fa-download text-2xl text-teal-500"></i>
+              </div>
+              <h3 class="text-lg font-semibold mb-1">PCL启动器</h3>
+              <p class="text-sm text-gray-400 truncate w-full">https://bbsmc.net/software/pcl</p>
+            </div>
+          </a>
+        </div>
+        
+        <div class="bg-dark-200 rounded-xl overflow-hidden shadow-md card-hover">
+          <a href="https://mc-zhixu.lanzoul.com/iWeJW2dic38h" target="_blank" class="block h-full">
+            <div class="h-2 bg-orange-500"></div>
+            <div class="p-6 flex flex-col items-center text-center">
+              <div class="w-16 h-16 rounded-full bg-orange-500/20 flex items-center justify-center mb-4">
+                <i class="fa fa-desktop text-2xl text-orange-500"></i>
+              </div>
+              <h3 class="text-lg font-semibold mb-1">Radmin_LAN</h3>
+              <p class="text-sm text-gray-400 truncate w-full">密码：9ge9</p>
+            </div>
+          </a>
+        </div>
+        
+        <div class="bg-dark-200 rounded-xl overflow-hidden shadow-md card-hover">
+          <a href="https://www.curseforge.com/minecraft/texture-packs/xray-ultimate-1-11-compatible" target="_blank" class="block h-full">
+            <div class="h-2 bg-cyan-500"></div>
+            <div class="p-6 flex flex-col items-center text-center">
+              <div class="w-16 h-16 rounded-full bg-cyan-500/20 flex items-center justify-center mb-4">
+                <i class="fa fa-image text-2xl text-cyan-500"></i>
+              </div>
+              <h3 class="text-lg font-semibold mb-1">矿透材质包</h3>
+              <p class="text-sm text-gray-400 truncate w-full">CurseForge</p>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+    
+    <!-- 我添加的网址区域 -->
+    <section>
+      <h2 class="text-xl font-semibold mb-6 flex items-center">
+        <i class="fa fa-star text-yellow-400 mr-2"></i>我添加的网址
+      </h2>
+      <div id="customWebsitesContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <!-- 自定义网站卡片将在这里动态生成 -->
+      </div>
+    </section>
+    
+    <!-- 空状态提示 -->
+    <div id="emptyState" class="hidden py-16 text-center">
+      <div class="w-24 h-24 mx-auto mb-4 text-gray-600">
+        <i class="fa fa-folder-open text-6xl"></i>
+      </div>
+      <h3 class="text-xl font-medium mb-2">暂无添加的网站</h3>
+      <p class="text-gray-400">使用上方表单添加您常用的网站吧</p>
+    </div>
+    
+    <!-- 页脚 -->
+    <footer class="mt-16 text-center text-gray-500 text-sm">
+      <p>花果山网页 &copy; 2023 | 快捷访问中心</p>
+    </footer>
+  </div>
+  
+  <!-- JavaScript -->
+  <script>
+    // 生成随机颜色
+    function getRandomColor() {
+      const colors = [
+        'bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-yellow-500', 
+        'bg-purple-500', 'bg-pink-500', 'bg-indigo-500', 'bg-teal-500'
+      ];
+      return colors[Math.floor(Math.random() * colors.length)];
+    }
+    
+    // 从URL提取域名作为名称
+    function getDomainFromUrl(url) {
+      try {
+        const urlObj = new URL(url);
+        return urlObj.hostname.replace('www.', '');
+      } catch (e) {
+        return '未知网站';
+      }
+    }
+    
+    // 生成随机图标
+    function getRandomIcon() {
+      const icons = [
+        'fa-globe', 'fa-laptop', 'fa-code', 'fa-file', 'fa-newspaper-o',
+        'fa-shopping-bag', 'fa-book', 'fa-film', 'fa-music', 'fa-gamepad'
+      ];
+      return icons[Math.floor(Math.random() * icons.length)];
+    }
+    
+    // 添加新网站卡片
+    function addWebsiteCard(url, name = '') {
+      // 确保URL以http开头
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+      }
+      
+      // 如果没有提供名称，则从URL提取
+      const websiteName = name || getDomainFromUrl(url);
+      const color = getRandomColor();
+      const icon = getRandomIcon();
+      const colorLight = color.replace('bg-', 'bg-').replace('500', '500/20');
+      
+      const websitesContainer = document.getElementById('customWebsitesContainer');
+      
+      // 创建新卡片
+      const card = document.createElement('div');
+      card.className = 'bg-dark-200 rounded-xl overflow-hidden shadow-md card-hover relative';
+      card.dataset.url = url;
+      card.dataset.name = websiteName;
+      
+      card.innerHTML = `
+        <div class="h-2 ${color}"></div>
+        <a href="${url}" target="_blank" class="block h-full">
+          <div class="p-6 flex flex-col items-center text-center">
+            <div class="w-16 h-16 rounded-full ${colorLight} flex items-center justify-center mb-4">
+              <i class="fa ${icon} text-2xl ${color.replace('bg-', 'text-')}"></i>
+            </div>
+            <h3 class="text-lg font-semibold mb-1">${websiteName}</h3>
+            <p class="text-sm text-gray-400 truncate w-full">${url}</p>
+          </div>
+        </a>
+        <button class="delete-btn absolute top-2 right-2 bg-dark-300/80 hover:bg-red-500 text-gray-300 hover:text-white rounded-full w-6 h-6 flex items-center justify-center transition-colors">
+          <i class="fa fa-times text-xs"></i>
+        </button>
+      `;
+      
+      // 添加到容器
+      websitesContainer.appendChild(card);
+      
+      // 添加删除功能
+      const deleteBtn = card.querySelector('.delete-btn');
+      deleteBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // 添加删除动画
+        card.classList.add('scale-95', 'opacity-0');
+        card.style.transition = 'all 0.3s ease';
+        
+        setTimeout(() => {
+          card.remove();
+          checkEmptyState();
+          saveWebsitesToLocalStorage();
+        }, 300);
+      });
+      
+      // 保存到本地存储
+      saveWebsitesToLocalStorage();
+      checkEmptyState();
+    }
+    
+    // 检查空状态
+    function checkEmptyState() {
+      const customCards = document.querySelectorAll('#customWebsitesContainer > div');
+      const emptyState = document.getElementById('emptyState');
+      
+      if (customCards.length === 0) {
+        emptyState.classList.remove('hidden');
+      } else {
+        emptyState.classList.add('hidden');
+      }
+    }
+    
+    // 保存网站到本地存储
+    function saveWebsitesToLocalStorage() {
+      const customCards = document.querySelectorAll('#customWebsitesContainer > div');
+      const websites = [];
+      
+      customCards.forEach(card => {
+        const url = card.dataset.url;
+        const name = card.dataset.name;
+        websites.push({ url, name });
+      });
+      
+      localStorage.setItem('customWebsites', JSON.stringify(websites));
+    }
+    
+    // 从本地存储加载网站
+    function loadWebsitesFromLocalStorage() {
+      const websites = JSON.parse(localStorage.getItem('customWebsites') || '[]');
+      
+      websites.forEach(website => {
+        addWebsiteCard(website.url, website.name);
+      });
+    }
+    
+    // 新增标签页功能 - 复制当前网页地址，跳转到豆包
+    document.getElementById('newTabBtn').addEventListener('click', function() {
+      // 获取当前页面URL
+      const currentUrl = window.location.href;
+      
+      // 这里使用doubao作为跳转地址，您可以根据需要修改
+      window.open('https://www.doubao.com', '_blank');
+      
+      // 如果需要在新标签页中打开当前页面的副本，可以使用下面这行代码
+      // window.open(currentUrl, '_blank');
+    });
+    
+    // 表单提交事件
+    document.getElementById('addWebsiteForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      
+      const urlInput = document.getElementById('websiteUrl');
+      const nameInput = document.getElementById('websiteName');
+      
+      const url = urlInput.value.trim();
+      const name = nameInput.value.trim();
+      
+      if (url) {
+        addWebsiteCard(url, name);
+        
+        // 清空输入
+        urlInput.value = '';
+        nameInput.value = '';
+        
+        // 添加成功提示动画
+        const form = document.getElementById('addWebsiteForm');
+        form.classList.add('ring-2', 'ring-green-500');
+        setTimeout(() => {
+          form.classList.remove('ring-2', 'ring-green-500');
+        }, 1000);
+      }
+    });
+    
+    // 页面加载时执行
+    window.addEventListener('DOMContentLoaded', function() {
+      loadWebsitesFromLocalStorage();
+      checkEmptyState();
+    });
+  </script>
+</body>
+</html>
