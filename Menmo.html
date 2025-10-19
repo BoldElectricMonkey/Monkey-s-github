@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Menmo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+  
+  <!-- Tailwind 配置 -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'windows-blue': '#0052cc',
+            'window-title': '#000080',
+            'start-menu': '#000080',
+            'taskbar': '#c0c0c0',
+            'window-bg': '#ffffff',
+            'window-border': '#000000',
+            'button-highlight': '#ffffff',
+            'button-shadow': '#7b7b7b',
+          },
+          fontFamily: {
+            'system': ['Segoe UI', 'Microsoft YaHei', 'sans-serif'],
+          },
+        },
+      }
+    }
+  </script>
+  
+  <style type="text/tailwindcss">
+    @layer utilities {
+      .window-shadow {
+        box-shadow: 1px 1px 0px #000000;
+      }
+      .button-3d {
+        border-top: 2px solid theme('colors.button-highlight');
+        border-left: 2px solid theme('colors.button-highlight');
+        border-right: 2px solid theme('colors.button-shadow');
+        border-bottom: 2px solid theme('colors.button-shadow');
+      }
+      .button-3d-pressed {
+        border-top: 2px solid theme('colors.button-shadow');
+        border-left: 2px solid theme('colors.button-shadow');
+        border-right: 2px solid theme('colors.button-highlight');
+        border-bottom: 2px solid theme('colors.button-highlight');
+        background-color: #c0c0c0;
+      }
+      .title-bar-button {
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+      }
+      .icon-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, 80px);
+        gap: 10px;
+      }
+      .icon-item {
+        width: 70px;
+        text-align: center;
+        cursor: pointer;
+        padding: 5px;
+      }
+      .icon-item:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+      .window-content {
+        height: calc(100% - 30px);
+        overflow: auto;
+      }
+      .start-menu {
+        transform-origin: bottom left;
+        transform: scaleY(0);
+        transition: transform 0.3s ease-out;
+      }
+      .start-menu.open {
+        transform: scaleY(1);
+      }
+      .disk-drive {
+        height: 80px;
+        width: 80px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        cursor: pointer;
+      }
+      .disk-drive:hover {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+      .context-menu {
+        display: none;
+        position: absolute;
+        z-index: 1000;
+        width: 180px;
+      }
+      .context-menu.show {
+        display: block;
+      }
+      .context-menu-item {
+        padding: 4px 10px;
+        cursor: pointer;
+      }
+      .context-menu-item:hover {
+        background-color: #000080;
+        color: white;
+      }
+      .calculator-btn {
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+      .shutdown-screen {
+        background: linear-gradient(135deg, #000080, #1a367c);
+        transition: opacity 1s ease-in-out;
+      }
+      /* 修复任务栏项目溢出问题 */
+      #taskbar-items {
+        flex: 1;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+      #taskbar-items::-webkit-scrollbar {
+        display: none;
+      }
+      /* 颜色主题相关样式 */
+      .theme-option {
+        width: 20px;
+        height: 20px;
+        border-radius: 3px;
+        cursor: pointer;
+        display: inline-block;
+        margin-right: 8px;
+      }
+    }
+  </style>
+</head>
+<body class="bg-[#008080] font-system overflow-hidden h-screen w-screen m-0 p-0 transition-colors duration-300" id="desktop-bg">
+  <!-- 开机屏幕 -->
+  <div id="boot-screen" class="fixed inset-0 z-50 bg-black flex flex-col items-center justify-center">
+    <div class="text-white text-4xl mb-8">Menmo</div>
+    <div class="w-1/3 h-4 bg-gray-700 rounded overflow-hidden">
+      <div id="boot-progress" class="h-full bg-blue-500 w-0 transition-all duration-300"></div>
+    </div>
+  </div>
+
+  <!-- 关机屏幕 -->
+  <div id="shutdown-screen" class="fixed inset-0 z-50 shutdown-screen opacity-0 pointer-events-none flex flex-col items-center justify-center">
+    <div class="text-white text-4xl mb-8">正在关闭计算机...</div>
+    <div class="w-1/3 h-4 bg-gray-700 rounded overflow-hidden">
+      <div id="shutdown-progress" class="h-full bg-blue-500 w-0 transition-all duration-300"></div>
+    </div>
+  </div>
+
+  <!-- 桌面图标 -->
+  <div id="desktop" class="fixed inset-0 p-4">
+    <div class="icon-item text-white" onclick="openMyComputer()">
+      <i class="fa fa-desktop text-3xl block mx-auto"></i>
+      <div>我的电脑</div>
+    </div>
+    <div class="icon-item text-white mt-4" onclick="openNotepad()">
+      <i class="fa fa-file-text-o text-3xl block mx-auto"></i>
+      <div>记事本</div>
+    </div>
+    <div class="icon-item text-white mt-4" onclick="openCalculator()">
+      <i class="fa fa-calculator text-3xl block mx-auto"></i>
+      <div>计算器</div>
+    </div>
+    <div class="icon-item text-white mt-4" onclick="openBrowser()">
+      <i class="fa fa-globe text-3xl block mx-auto"></i>
+      <div>浏览器</div>
+    </div>
+    <div class="icon-item text-white mt-4" onclick="openSettings()">
+      <i class="fa fa-cog text-3xl block mx-auto"></i>
+      <div>设置</div>
+    </div>
+  </div>
+
+  <!-- 任务栏 -->
+  <div id="taskbar" class="fixed bottom-0 left-0 right-0 h-10 bg-taskbar border-t border-black flex items-center px-2 transition-colors duration-300">
+    <!-- 开始按钮 -->
+    <div id="start-button" class="button-3d h-9 w-24 flex items-center px-2 mr-2" onclick="toggleStartMenu()">
+      <i class="fa fa-windows text-xl mr-2"></i>
+      <span class="font-bold text-sm">开始</span>
+    </div>
+    
+    <!-- 任务栏项目 -->
+    <div id="taskbar-items" class="flex items-center gap-1">
+      <!-- 动态添加任务栏项目 -->
+    </div>
+    
+    <!-- 系统托盘 -->
+    <div class="button-3d h-9 px-2 flex items-center gap-2 ml-2">
+      <div id="system-time" class="text-sm"></div>
+      <i class="fa fa-volume-up"></i>
+      <i class="fa fa-wifi"></i>
+    </div>
+  </div>
+
+  <!-- 开始菜单 -->
+  <div id="start-menu" class="start-menu fixed bottom-10 left-2 w-48 bg-taskbar button-3d z-40 transition-colors duration-300">
+    <div class="p-1 border-b border-black">
+      <div class="button-3d p-1 mb-1 text-sm" onclick="openMyComputer()">
+        <i class="fa fa-desktop mr-2"></i>我的电脑
+      </div>
+      <div class="button-3d p-1 mb-1 text-sm" onclick="openNotepad()">
+        <i class="fa fa-file-text-o mr-2"></i>记事本
+      </div>
+      <div class="button-3d p-1 mb-1 text-sm" onclick="openCalculator()">
+        <i class="fa fa-calculator mr-2"></i>计算器
+      </div>
+      <div class="button-3d p-1 mb-1 text-sm" onclick="openBrowser()">
+        <i class="fa fa-globe mr-2"></i>浏览器
+      </div>
+      <div class="button-3d p-1 mb-1 text-sm" onclick="openSettings()">
+        <i class="fa fa-cog mr-2"></i>设置
+      </div>
+    </div>
+    <div class="p-1 mt-2">
+      <div class="button-3d p-1 text-sm text-red-700" onclick="shutdownComputer()">
+        <i class="fa fa-power-off mr-2"></i>关闭计算机
+      </div>
+    </div>
+  </div>
+
+  <!-- 窗口容器 -->
+  <div id="windows-container" class="fixed inset-0 pointer-events-none">
+    <!-- 动态添加窗口 -->
+  </div>
+
+  <!-- 记事本保存对话框 -->
+  <div id="save-dialog" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+    <div class="bg-taskbar button-3d w-72 h-56 p-3 transition-colors duration-300">
+      <div class="bg-window-title text-white p-1 mb-2 flex justify-between items-center transition-colors duration-300">
+        <span>另存为</span>
+        <div class="title-bar-button button-3d" onclick="closeSaveDialog()">×</div>
+      </div>
+      <div class="p-2">
+        <div class="mb-2">
+          <label class="block mb-1 text-sm">保存位置:</label>
+          <select id="save-location" class="button-3d w-full p-1 text-sm">
+            <option value="desktop">桌面</option>
+            <option value="c">本地磁盘 (C:)</option>
+            <option value="d">本地磁盘 (D:)</option>
+          </select>
+        </div>
+        <div class="mb-2">
+          <label class="block mb-1 text-sm">文件名:</label>
+          <input type="text" id="file-name" class="button-3d w-full p-1 text-sm" value="无标题.txt">
+        </div>
+        <div class="flex justify-end gap-2 mt-3">
+          <button class="button-3d px-3 py-1 text-sm" onclick="closeSaveDialog()">取消</button>
+          <button class="button-3d px-3 py-1 text-sm" onclick="saveFile()">保存</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 系统状态变量
+    let windows = [];
+    let nextWindowId = 1;
+    let activeWindowId = null;
+    let desktopFiles = [];
+    let cDriveFiles = [];
+    let dDriveFiles = [];
+    // 新增设置状态
+    let systemSettings = {
+      smoothMovement: true,
+      theme: {
+        desktop: '#008080',
+        taskbar: '#c0c0c0',
+        windowTitle: '#000080'
+      }
+    };
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      // 启动开机动画
+      bootSystem();
+      
+      // 更新系统时间
+      updateSystemTime();
+      setInterval(updateSystemTime, 1000);
+      
+      // 桌面右键菜单
+      document.getElementById('desktop').addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        showContextMenu(e.clientX, e.clientY);
+      });
+      
+      // 点击空白处关闭右键菜单
+      document.addEventListener('click', () => {
+        hideContextMenu();
+      });
+
+      // 窗口大小变化时重新计算窗口位置
+      window.addEventListener('resize', () => {
+        windows.forEach(window => {
+          const winElement = document.getElementById(window.id);
+          if (winElement && !window.isMaximized) {
+            // 调整窗口位置防止超出屏幕
+            const maxX = window.innerWidth - winElement.offsetWidth;
+            const maxY = window.innerHeight - winElement.offsetHeight;
+            const newLeft = Math.max(0, Math.min(parseInt(winElement.style.left), maxX));
+            const newTop = Math.max(0, Math.min(parseInt(winElement.style.top), maxY));
+            
+            winElement.style.left = `${newLeft}px`;
+            winElement.style.top = `${newTop}px`;
+            
+            // 更新窗口数据
+            window.originalSize.left = newLeft;
+            window.originalSize.top = newTop;
+          }
+        });
+      });
+    });
+
+    // 开机动画
+    function bootSystem() {
+      const progressBar = document.getElementById('boot-progress');
+      let progress = 0;
+      
+      const interval = setInterval(() => {
+        progress += Math.random() * 5;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          
+          // 开机完成，隐藏开机画面
+          setTimeout(() => {
+            document.getElementById('boot-screen').classList.add('opacity-0');
+            setTimeout(() => {
+              document.getElementById('boot-screen').style.display = 'none';
+            }, 500);
+          }, 500);
+        }
+        progressBar.style.width = `${progress}%`;
+      }, 100);
+    }
+
+    // 关机动画
+    function shutdownComputer() {
+      const shutdownScreen = document.getElementById('shutdown-screen');
+      const progressBar = document.getElementById('shutdown-progress');
+      
+      // 显示关机画面
+      shutdownScreen.style.opacity = '1';
+      shutdownScreen.style.pointerEvents = 'auto';
+      
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += Math.random() * 5;
+        if (progress >= 100) {
+          progress = 100;
+          clearInterval(interval);
+          
+          // 模拟关机后重启
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
+        }
+        progressBar.style.width = `${progress}%`;
+      }, 100);
+      
+      // 关闭开始菜单
+      toggleStartMenu();
+    }
+
+    // 更新系统时间
+    function updateSystemTime() {
+      const now = new Date();
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      document.getElementById('system-time').textContent = `${hours}:${minutes}`;
+    }
+
+    // 切换开始菜单
+    function toggleStartMenu() {
+      const startMenu = document.getElementById('start-menu');
+      startMenu.classList.toggle('open');
+    }
+
+    // 创建窗口 - 调整默认大小适应小屏幕
+    function createWindow(title, content, width = 600, height = 400, icon = 'fa-window-maximize') {
+      // 根据屏幕大小自动调整窗口尺寸
+      const maxWidth = window.innerWidth * 0.8;
+      const maxHeight = window.innerHeight * 0.8;
+      width = Math.min(width, maxWidth);
+      height = Math.min(height, maxHeight);
+      
+      const windowId = `window-${nextWindowId++}`;
+      const left = Math.max(10, (window.innerWidth - width) / 2);
+      const top = Math.max(10, (window.innerHeight - height) / 2);
+      
+      // 创建窗口元素
+      const windowElement = document.createElement('div');
+      windowElement.id = windowId;
+      windowElement.className = `absolute bg-taskbar window-shadow pointer-events-auto ${systemSettings.smoothMovement ? 'transition-all duration-200' : ''} z-10`;
+      windowElement.style.width = `${width}px`;
+      windowElement.style.height = `${height}px`;
+      windowElement.style.left = `${left}px`;
+      windowElement.style.top = `${top}px`;
+      
+      // 窗口内容
+      windowElement.innerHTML = `
+        <div class="window-title-bar bg-window-title text-white h-8 px-2 flex items-center justify-between cursor-move transition-colors duration-300" style="background-color: ${systemSettings.theme.windowTitle}">
+          <div class="flex items-center">
+            <i class="fa ${icon} mr-2"></i>
+            <span class="text-sm">${title}</span>
+          </div>
+          <div class="flex">
+            <div class="title-bar-button button-3d mr-1" onclick="minimizeWindow('${windowId}')">
+              <i class="fa fa-window-minimize"></i>
+            </div>
+            <div class="title-bar-button button-3d mr-1" onclick="maximizeWindow('${windowId}')">
+              <i class="fa fa-window-maximize"></i>
+            </div>
+            <div class="title-bar-button button-3d" onclick="closeWindow('${windowId}')">
+              <i class="fa fa-times"></i>
+            </div>
+          </div>
+        </div>
+        <div class="window-content p-1 bg-window-bg">
+          ${content}
+        </div>
+      `;
+      
+      // 添加到窗口容器
+      document.getElementById('windows-container').appendChild(windowElement);
+      
+      // 记录窗口信息
+      windows.push({
+        id: windowId,
+        title,
+        isMaximized: false,
+        originalSize: { width, height, left, top },
+        isMinimized: false
+      });
+      
+      // 添加任务栏项目
+      addTaskbarItem(windowId, title, icon);
+      
+      // 激活窗口
+      activateWindow(windowId);
+      
+      // 窗口拖动功能
+      makeWindowDraggable(windowId);
+      
+      return windowId;
+    }
+
+    // 窗口拖动功能 - 修复边界问题
+    function makeWindowDraggable(windowId) {
+      const windowElement = document.getElementById(windowId);
+      const titleBar = windowElement.querySelector('.window-title-bar');
+      
+      let isDragging = false;
+      let offsetX, offsetY;
+      let currentX, currentY;
+      
+      titleBar.addEventListener('mousedown', (e) => {
+        // 激活窗口
+        activateWindow(windowId);
+        
+        // 如果是最大化状态，不能拖动
+        const windowData = windows.find(w => w.id === windowId);
+        if (windowData.isMaximized) return;
+        
+        isDragging = true;
+        const rect = windowElement.getBoundingClientRect();
+        offsetX = e.clientX - rect.left;
+        offsetY = e.clientY - rect.top;
+        currentX = rect.left;
+        currentY = rect.top;
+        
+        // 提高z-index，确保在最上层
+        windowElement.style.zIndex = '20';
+        
+        // 防止选择文本
+        e.preventDefault();
+      });
+      
+      document.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        
+        const x = e.clientX - offsetX;
+        const y = e.clientY - offsetY;
+        
+        // 限制窗口在可视区域内，增加内边距防止贴边
+        const maxX = window.innerWidth - windowElement.offsetWidth - 10;
+        const maxY = window.innerHeight - windowElement.offsetHeight - 10;
+        
+        const constrainedX = Math.max(10, Math.min(x, maxX));
+        const constrainedY = Math.max(10, Math.min(y, maxY));
+        
+        // 根据平滑移动设置更新位置
+        if (systemSettings.smoothMovement) {
+          windowElement.style.left = `${constrainedX}px`;
+          windowElement.style.top = `${constrainedY}px`;
+        } else {
+          // 无平滑动画，直接更新
+          windowElement.style.transition = 'none';
+          windowElement.style.left = `${constrainedX}px`;
+          windowElement.style.top = `${constrainedY}px`;
+          // 强制重绘
+          windowElement.offsetHeight;
+          windowElement.style.transition = '';
+        }
+        
+        // 更新窗口数据
+        const windowData = windows.find(w => w.id === windowId);
+        if (windowData) {
+          windowData.originalSize.left = constrainedX;
+          windowData.originalSize.top = constrainedY;
+        }
+      });
+      
+      document.addEventListener('mouseup', () => {
+        isDragging = false;
+      });
+    }
+
+    // 激活窗口
+    function activateWindow(windowId) {
+      // 降低所有窗口的z-index
+      windows.forEach(w => {
+        const el = document.getElementById(w.id);
+        if (el) el.style.zIndex = '10';
+      });
+      
+      // 提高当前窗口的z-index
+      const windowElement = document.getElementById(windowId);
+      if (windowElement) windowElement.style.zIndex = '30';
+      
+      // 更新活动窗口ID
+      activeWindowId = windowId;
+      
+      // 更新任务栏项目状态
+      updateTaskbarItems();
+    }
+
+    // 添加任务栏项目 - 优化小屏幕显示
+    function addTaskbarItem(windowId, title, icon) {
+      const taskbarItems = document.getElementById('taskbar-items');
+      
+      // 限制任务栏项目数量，超过则替换最早的
+      if (taskbarItems.children.length > 5) {
+        taskbarItems.removeChild(taskbarItems.firstChild);
+      }
+      
+      const taskbarItem = document.createElement('div');
+      taskbarItem.id = `taskbar-${windowId}`;
+      taskbarItem.className = 'button-3d h-9 px-2 flex items-center whitespace-nowrap text-sm';
+      taskbarItem.innerHTML = `<i class="fa ${icon} mr-1"></i> ${title}`;
+      taskbarItem.onclick = () => toggleWindowVisibility(windowId);
+      
+      taskbarItems.appendChild(taskbarItem);
+    }
+
+    // 更新任务栏项目状态
+    function updateTaskbarItems() {
+      windows.forEach(w => {
+        const taskbarItem = document.getElementById(`taskbar-${w.id}`);
+        if (taskbarItem) {
+          if (w.id === activeWindowId && !w.isMinimized) {
+            taskbarItem.classList.add('button-3d-pressed');
+          } else {
+            taskbarItem.classList.remove('button-3d-pressed');
+          }
+        }
+      });
+    }
+
+    // 切换窗口可见性
+    function toggleWindowVisibility(windowId) {
+      const windowData = windows.find(w => w.id === windowId);
+      if (!windowData) return;
+      
+      const windowElement = document.getElementById(windowId);
+      if (!windowElement) return;
+      
+      if (windowData.isMinimized) {
+        // 还原窗口
+        windowElement.style.display = 'block';
+        windowData.isMinimized = false;
+        activateWindow(windowId);
+      } else if (windowId === activeWindowId) {
+        // 最小化窗口
+        minimizeWindow(windowId);
+      } else {
+        // 激活窗口
+        activateWindow(windowId);
+      }
+    }
+
+    // 最小化窗口
+    function minimizeWindow(windowId) {
+      const windowData = windows.find(w => w.id === windowId);
+      if (!windowData) return;
+      
+      const windowElement = document.getElementById(windowId);
+      if (!windowElement) return;
+      
+      windowElement.style.display = 'none';
+      windowData.isMinimized = true;
+      activeWindowId = null;
+      
+      updateTaskbarItems();
+    }
+
+    // 最大化窗口 - 修复最大化计算问题
+    function maximizeWindow(windowId) {
+      const windowData = windows.find(w => w.id === windowId);
+      if (!windowData) return;
+      
+      const windowElement = document.getElementById(windowId);
+      if (!windowElement) return;
+      
+      if (windowData.isMaximized) {
+        // 还原窗口
+        windowElement.style.width = `${windowData.originalSize.width}px`;
+        windowElement.style.height = `${windowData.originalSize.height}px`;
+        windowElement.style.left = `${windowData.originalSize.left}px`;
+        windowElement.style.top = `${windowData.originalSize.top}px`;
+        windowElement.style.maxWidth = 'none';
+        windowElement.style.maxHeight = 'none';
+        
+        // 更新最大化按钮图标
+        const maximizeBtn = windowElement.querySelector('.fa-window-maximize, .fa-window-restore').parentElement;
+        maximizeBtn.innerHTML = '<i class="fa fa-window-maximize"></i>';
+        
+        windowData.isMaximized = false;
+      } else {
+        // 保存原始尺寸和位置
+        windowData.originalSize.width = windowElement.offsetWidth;
+        windowData.originalSize.height = windowElement.offsetHeight;
+        windowData.originalSize.left = parseInt(windowElement.style.left);
+        windowData.originalSize.top = parseInt(windowElement.style.top);
+        
+        // 最大化窗口，考虑任务栏高度
+        const taskbarHeight = document.getElementById('taskbar').offsetHeight;
+        windowElement.style.width = `calc(100% - 20px)`;
+        windowElement.style.height = `calc(100% - ${taskbarHeight + 20}px)`;
+        windowElement.style.left = '10px';
+        windowElement.style.top = '10px';
+        windowElement.style.maxWidth = '100%';
+        windowElement.style.maxHeight = '100%';
+        
+        // 更新最大化按钮图标
+        const maximizeBtn = windowElement.querySelector('.fa-window-maximize').parentElement;
+        maximizeBtn.innerHTML = '<i class="fa fa-window-restore"></i>';
+        
+        windowData.isMaximized = true;
+      }
+    }
+
+    // 关闭窗口
+    function closeWindow(windowId) {
+      // 从DOM中移除窗口
+      const windowElement = document.getElementById(windowId);
+      if (windowElement) {
+        windowElement.remove();
+      }
+      
+      // 从任务栏移除项目
+      const taskbarItem = document.getElementById(`taskbar-${windowId}`);
+      if (taskbarItem) {
+        taskbarItem.remove();
+      }
+      
+      // 从窗口列表中移除
+      windows = windows.filter(w => w.id !== windowId);
+      
+      // 更新活动窗口
+      if (activeWindowId === windowId) {
+        activeWindowId = windows.length > 0 ? windows[windows.length - 1].id : null;
+        if (activeWindowId) {
+          activateWindow(activeWindowId);
+        }
+      }
+    }
+
+    // 打开"我的电脑"窗口
+    function openMyComputer() {
+      // 检查是否已打开
+      const existingWindow = windows.find(w => w.title === '我的电脑');
+      if (existingWindow) {
+        toggleWindowVisibility(existingWindow.id);
+        toggleStartMenu(); // 关闭开始菜单
+        return;
+      }
+      
+      const content = `
+        <div class="p-3">
+          <h3 class="text-base font-bold mb-3">我的电脑</h3>
+          <div class="flex gap-4 flex-wrap">
+            <div class="disk-drive" onclick="openDisk('c')">
+              <i class="fa fa-hdd-o text-3xl"></i>
+              <div class="text-sm">本地磁盘 (C:)</div>
+            </div>
+            <div class="disk-drive" onclick="openDisk('d')">
+              <i class="fa fa-hdd-o text-3xl"></i>
+              <div class="text-sm">本地磁盘 (D:)</div>
+            </div>
+          </div>
+        </div>
+      `;
+      
+      createWindow('我的电脑', content, 400, 300, 'fa-desktop');
+      
+      // 关闭开始菜单
+      toggleStartMenu();
+    }
+
+    // 打开磁盘窗口
+    function openDisk(drive) {
+      const driveName = drive === 'c' ? '本地磁盘 (C:)' : '本地磁盘 (D:)';
+      
+      // 检查是否已打开
+      const existingWindow = windows.find(w => w.title === driveName);
+      if (existingWindow) {
+        toggleWindowVisibility(existingWindow.id);
+        return;
+      }
+      
+      // 获取磁盘文件
+      const files = drive === 'c' ? cDriveFiles : dDriveFiles;
+      
+      let filesList = '<p class="text-gray-500 italic text-sm">该磁盘中没有文件。</p>';
+      if (files.length > 0) {
+        filesList = '<ul class="list-disc pl-5 text-sm">';
+        files.forEach(file => {
+          filesList += `<li class="mb-1" onclick="openFile('${file.id}')">${file.name}</li>`;
+        });
+        filesList += '</ul>';
+      }
+      
+      const content = `
+        <div class="p-3">
+          <h3 class="text-base font-bold mb-3">${driveName}</h3>
+          <div class="mb-3">
+            <button class="button-3d px-2 py-1 text-sm" onclick="createNewTextFile('${drive}')">
+              <i class="fa fa-file-text-o mr-1"></i>新建文本文件
+            </button>
+          </div>
+          <div>
+            ${filesList}
+          </div>
+        </div>
+      `;
+      
+      createWindow(driveName, content, 400, 300, 'fa-hdd-o');
+    }
+
+    // 创建新文本文件
+    function createNewTextFile(drive) {
+      const fileName = `新建文本文件${Date.now()}.txt`;
+      const fileId = `file-${Date.now()}`;
+      
+      // 添加到相应的磁盘
+      const fileData = {
+        id: fileId,
+        name: fileName,
+        content: '',
+        location: drive
+      };
+      
+      if (drive === 'c') {
+        cDriveFiles.push(fileData);
+      } else if (drive === 'd') {
+        dDriveFiles.push(fileData);
+      } else if (drive === 'desktop') {
+        desktopFiles.push(fileData);
+      }
+      
+      // 刷新磁盘窗口
+      const driveName = drive === 'c' ? '本地磁盘 (C:)' : '本地磁盘 (D:)';
+      const existingWindow = windows.find(w => w.title === driveName);
+      if (existingWindow) {
+        closeWindow(existingWindow.id);
+        openDisk(drive);
+      }
+    }
+
+    // 打开文件
+    function openFile(fileId) {
+      // 查找文件
+      let fileData = desktopFiles.find(f => f.id === fileId);
+      if (!fileData) fileData = cDriveFiles.find(f => f.id === fileId);
+      if (!fileData) fileData = dDriveFiles.find(f => f.id === fileId);
+      
+      if (!fileData) return;
+      
+      // 打开记事本并加载文件内容
+      const windowId = openNotepad();
+      const textarea = document.querySelector(`#${windowId} textarea`);
+      if (textarea) {
+        textarea.value = fileData.content;
+      }
+      
+      // 更新窗口标题
+      const windowElement = document.getElementById(windowId);
+      if (windowElement) {
+        const titleElement = windowElement.querySelector('.window-title-bar span');
+        if (titleElement) {
+          titleElement.textContent = fileData.name + ' - 记事本';
+        }
+        
+        // 存储文件ID到窗口
+        windowElement.setAttribute('data-file-id', fileId);
+      }
+    }
+
+    // 打开记事本
+    function openNotepad() {
+      // 检查是否已打开
+      const existingWindow = windows.find(w => w.title.startsWith('记事本') || w.title.endsWith(' - 记事本'));
+      if (existingWindow) {
+        toggleWindowVisibility(existingWindow.id);
+        toggleStartMenu(); // 关闭开始菜单
+        return existingWindow.id;
+      }
+      
+      const content = `
+        <div class="flex flex-col h-full">
+          <div class="button-3d p-1 mb-1 flex gap-1">
+            <div class="px-2 py-1 button-3d cursor-pointer text-sm" onclick="showNotepadFileMenu(event)">
+              <i class="fa fa-file mr-1"></i>文件
+            </div>
+            <div class="px-2 py-1 button-3d cursor-pointer text-sm">
+              <i class="fa fa-edit mr-1"></i>编辑
+            </div>
+            <div class="px-2 py-1 button-3d cursor-pointer text-sm">
+              <i class="fa fa-help mr-1"></i>帮助
+            </div>
+          </div>
+          <!-- 文件下拉菜单 -->
+          <div id="file-menu" class="absolute hidden bg-taskbar button-3d w-36 z-10 text-sm transition-colors duration-300">
+            <div class="p-1 cursor-pointer hover:bg-window-title hover:text-white" onclick="openSaveDialog()">另存为</div>
+          </div>
+          <textarea class="flex-1 button-3d p-2 resize-none focus:outline-none text-sm" placeholder="在此输入文本..."></textarea>
+        </div>
+      `;
+      
+      const windowId = createWindow('记事本', content, 500, 350, 'fa-file-text-o');
+      
+      // 关闭开始菜单
+      toggleStartMenu();
+      
+      return windowId;
+    }
+
+    // 显示记事本文件菜单 - 修复菜单定位问题
+    function showNotepadFileMenu(event) {
+      event.stopPropagation();
+      const fileMenu = document.getElementById('file-menu');
+      if (!fileMenu) return;
+      
+      // 定位菜单到按钮下方
+      const buttonRect = event.currentTarget.getBoundingClientRect();
+      const windowRect = document.getElementById(activeWindowId).getBoundingClientRect();
+      
+      // 计算相对于窗口的位置
+      const leftPos = buttonRect.left - windowRect.left;
+      const topPos = buttonRect.bottom - windowRect.top;
+      
+      fileMenu.style.left = `${leftPos}px`;
+      fileMenu.style.top = `${topPos}px`;
+      fileMenu.classList.remove('hidden');
+      
+      // 点击其他地方关闭菜单
+      document.addEventListener('click', hideFileMenu, { once: true });
+    }
+
+    // 隐藏记事本文件菜单
+    function hideFileMenu() {
+      const fileMenu = document.getElementById('file-menu');
+      if (fileMenu) {
+        fileMenu.classList.add('hidden');
+      }
+    }
+
+    // 打开保存对话框
+    function openSaveDialog() {
+      hideFileMenu();
+      const dialog = document.getElementById('save-dialog');
+      dialog.classList.remove('hidden');
+      dialog.classList.add('flex');
+      
+      // 设置默认文件名
+      const fileNameInput = document.getElementById('file-name');
+      fileNameInput.value = '无标题.txt';
+      
+      // 如果是已有文件，自动填充文件名
+      if (activeWindowId) {
+        const windowElement = document.getElementById(activeWindowId);
+        const titleElement = windowElement.querySelector('.window-title-bar span');
+        if (titleElement && titleElement.textContent.endsWith(' - 记事本')) {
+          const fileName = titleElement.textContent.replace(' - 记事本', '');
+          fileNameInput.value = fileName;
+        }
+      }
+    }
+
+    // 关闭保存对话框
+    function closeSaveDialog() {
+      const dialog = document.getElementById('save-dialog');
+      dialog.classList.add('hidden');
+      dialog.classList.remove('flex');
+    }
+
+    // 保存文件
+    function saveFile() {
+      const location = document.getElementById('save-location').value;
+      const fileName = document.getElementById('file-name').value;
+      
+      // 获取记事本内容
+      if (!activeWindowId) return;
+      
+      const windowElement = document.getElementById(activeWindowId);
+      const textarea = windowElement.querySelector('textarea');
+      if (!textarea) return;
+      
+      const content = textarea.value;
+      
+      // 创建文件数据
+      const fileId = windowElement.getAttribute('data-file-id') || `file-${Date.now()}`;
+      const fileData = {
+        id: fileId,
+        name: fileName,
+        content: content,
+        location: location
+      };
+      
+      // 移除旧文件（如果存在）
+      if (windowElement.getAttribute('data-file-id')) {
+        const oldLocation = desktopFiles.find(f => f.id === fileId) ? 'desktop' : 
+                          cDriveFiles.find(f => f.id === fileId) ? 'c' : 
+                          dDriveFiles.find(f => f.id === fileId) ? 'd' : null;
+                          
+        if (oldLocation === 'desktop') {
+          desktopFiles = desktopFiles.filter(f => f.id !== fileId);
+        } else if (oldLocation === 'c') {
+          cDriveFiles = cDriveFiles.filter(f => f.id !== fileId);
+        } else if (oldLocation === 'd') {
+          dDriveFiles = dDriveFiles.filter(f => f.id !== fileId);
+        }
+      }
+      
+      // 添加到相应位置
+      if (location === 'desktop') {
+        desktopFiles.push(fileData);
+      } else if (location === 'c') {
+        cDriveFiles.push(fileData);
+      } else if (location === 'd') {
+        dDriveFiles.push(fileData);
+      }
+      
+      // 更新窗口标题
+      const titleElement = windowElement.querySelector('.window-title-bar span');
+      if (titleElement) {
+        titleElement.textContent = `${fileName} - 记事本`;
+      }
+      
+      // 存储文件ID到窗口
+      windowElement.setAttribute('data-file-id', fileId);
+      
+      // 关闭保存对话框
+      closeSaveDialog();
+      
+      // 刷新桌面图标（如果保存到桌面）
+      if (location === 'desktop') {
+        refreshDesktopIcons();
+      }
+    }
+
+    // 刷新桌面图标
+    function refreshDesktopIcons() {
+      // 清除现有桌面文件图标
+      const desktop = document.getElementById('desktop');
+      const existingFileIcons = desktop.querySelectorAll('.file-icon');
+      existingFileIcons.forEach(icon => icon.remove());
+      
+      // 添加新的桌面文件图标
+      desktopFiles.forEach(file => {
+        const iconItem = document.createElement('div');
+        iconItem.className = 'icon-item text-white mt-4 file-icon';
+        iconItem.setAttribute('data-file-id', file.id);
+        iconItem.innerHTML = `
+          <i class="fa fa-file-text-o text-3xl block mx-auto"></i>
+          <div class="text-sm">${file.name}</div>
+        `;
+        iconItem.onclick = () => openFile(file.id);
+        
+        desktop.appendChild(iconItem);
+      });
+    }
+
+    // 打开计算器
+    function openCalculator() {
+      // 检查是否已打开
+      const existingWindow = windows.find(w => w.title === '计算器');
+      if (existingWindow) {
+        toggleWindowVisibility(existingWindow.id);
+        toggleStartMenu(); // 关闭开始菜单
+        return;
+      }
+      
+      const content = `
+        <div class="p-3 flex flex-col items-center">
+          <div class="button-3d w-full p-2 mb-3 text-right h-10 text-base" id="calculator-display">0</div>
+          <div class="grid grid-cols-4 gap-1 w-full">
+            <button class="calculator-btn button-3d bg-gray-300" onclick="calculatorClear()">C</button>
+            <button class="calculator-btn button-3d bg-gray-300" onclick="calculatorBackspace()">←</button>
+            <button class="calculator-btn button-3d bg-gray-300" onclick="calculatorOperator('%')">%</button>
+            <button class="calculator-btn button-3d bg-orange-400" onclick="calculatorOperator('/')">/</button>
+            
+            <button class="calculator-btn button-3d" onclick="calculatorNumber(7)">7</button>
+            <button class="calculator-btn button-3d" onclick="calculatorNumber(8)">8</button>
+            <button class="calculator-btn button-3d" onclick="calculatorNumber(9)">9</button>
+            <button class="calculator-btn button-3d bg-orange-400" onclick="calculatorOperator('*')">*</button>
+            
+            <button class="calculator-btn button-3d" onclick="calculatorNumber(4)">4</button>
+            <button class="calculator-btn button-3d" onclick="calculatorNumber(5)">5</button>
+            <button class="calculator-btn button-3d" onclick="calculatorNumber(6)">6</button>
+            <button class="calculator-btn button-3d bg-orange-400" onclick="calculatorOperator('-')">-</button>
+            
+            <button class="calculator-btn button-3d" onclick="calculatorNumber(1)">1</button>
+            <button class="calculator-btn button-3d" onclick="calculatorNumber(2)">2</button>
+            <button class="calculator-btn button-3d" onclick="calculatorNumber(3)">3</button>
+            <button class="calculator-btn button-3d bg-orange-400" onclick="calculatorOperator('+')">+</button>
+            
+            <button class="calculator-btn button-3d" onclick="calculatorNumber(0)">0</button>
+            <button class="calculator-btn button-3d" onclick="calculatorDot()">.</button>
+            <button class="calculator-btn button-3d bg-green-500" onclick="calculatorEquals()">=</button>
+          </div>
+        </div>
+      `;
+      
+      createWindow('计算器', content, 250, 300, 'fa-calculator');
+      
+      // 初始化计算器状态
+      initCalculator();
+      
+      // 关闭开始菜单
+      toggleStartMenu();
+    }
+
+    // 计算器状态
+    let calculatorState = {
+      display: '0',
+      previousValue: null,
+      operator: null,
+      resetOnNextInput: false
+    };
+
+    // 初始化计算器
+    function initCalculator() {
+      calculatorState = {
+        display: '0',
+        previousValue: null,
+        operator: null,
+        resetOnNextInput: false
+      };
+      updateCalculatorDisplay();
+    }
+
+    // 更新计算器显示
+    function updateCalculatorDisplay() {
+      const display = document.getElementById('calculator-display');
+      if (display) {
+        display.textContent = calculatorState.display;
+      }
+    }
+
+    // 计算器数字输入
+    function calculatorNumber(num) {
+      if (calculatorState.resetOnNextInput) {
+        calculatorState.display = num.toString();
+        calculatorState.resetOnNextInput = false;
+      } else {
+        calculatorState.display = calculatorState.display === '0' 
+          ? num.toString() 
+          : calculatorState.display + num.toString();
+      }
+      updateCalculatorDisplay();
+    }
+
+    // 计算器小数点
+    function calculatorDot() {
+      if (calculatorState.resetOnNextInput) {
+        calculatorState.display = '0.';
+        calculatorState.resetOnNextInput = false;
+      } else if (!calculatorState.display.includes('.')) {
+        calculatorState.display += '.';
+      }
+      updateCalculatorDisplay();
+    }
+
+    // 计算器运算符
+    function calculatorOperator(op) {
+      // 修复连续运算bug
+      if (calculatorState.display === '0' && calculatorState.previousValue === null) return;
+      
+      const currentValue = parseFloat(calculatorState.display);
+      
+      if (calculatorState.operator && calculatorState.previousValue !== null) {
+        // 计算之前的运算
+        calculatorEquals();
+        calculatorState.previousValue = parseFloat(calculatorState.display);
+      } else {
+        calculatorState.previousValue = currentValue;
+      }
+      
+      calculatorState.operator = op;
+      calculatorState.resetOnNextInput = true;
+    }
+
+    // 计算器等于 - 修复精度问题
+    function calculatorEquals() {
+      if (!calculatorState.operator || calculatorState.previousValue === null) return;
+      
+      const currentValue = parseFloat(calculatorState.display);
+      let result;
+      
+      switch (calculatorState.operator) {
+        case '+':
+          result = calculatorState.previousValue + currentValue;
+          break;
+        case '-':
+          result = calculatorState.previousValue - currentValue;
+          break;
+        case '*':
+          result = calculatorState.previousValue * currentValue;
+          break;
+        case '/':
+          // 修复除以零错误
+          if (currentValue === 0) {
+            calculatorState.display = "错误";
+            calculatorState.previousValue = null;
+            calculatorState.operator = null;
+            calculatorState.resetOnNextInput = true;
+            updateCalculatorDisplay();
+            return;
+          }
+          result = calculatorState.previousValue / currentValue;
+          break;
+        case '%':
+          result = calculatorState.previousValue % currentValue;
+          break;
+        default:
+          return;
+      }
+      
+      // 处理小数精度问题
+      if (result % 1 !== 0) {
+        result = parseFloat(result.toFixed(6));
+      }
+      
+      // 处理大数显示
+      if (result.toString().length > 10) {
+        calculatorState.display = result.toExponential(4);
+      } else {
+        calculatorState.display = result.toString();
+      }
+      
+      calculatorState.previousValue = null;
+      calculatorState.operator = null;
+      calculatorState.resetOnNextInput = true;
+      
+      updateCalculatorDisplay();
+    }
+
+    // 计算器清除
+    function calculatorClear() {
+      initCalculator();
+    }
+
+    // 计算器退格
+    function calculatorBackspace() {
+      if (calculatorState.display === "错误") {
+        calculatorState.display = "0";
+      } else if (calculatorState.display.length > 1) {
+        calculatorState.display = calculatorState.display.slice(0, -1);
+      } else {
+        calculatorState.display = '0';
+      }
+      updateCalculatorDisplay();
+    }
+
+    // 打开浏览器
+    function openBrowser() {
+      // 检查是否已打开
+      const existingWindow = windows.find(w => w.title === '浏览器');
+      if (existingWindow) {
+        toggleWindowVisibility(existingWindow.id);
+        toggleStartMenu(); // 关闭开始菜单
+        return;
+      }
+      
+      const content = `
+        <div class="flex flex-col h-full">
+          <div class="button-3d p-1 mb-1 flex items-center gap-1">
+            <button class="button-3d h-7 w-7 flex items-center justify-center" onclick="browserGoBack()">
+              <i class="fa fa-arrow-left text-sm"></i>
+            </button>
+            <button class="button-3d h-7 w-7 flex items-center justify-center" onclick="browserGoForward()">
+              <i class="fa fa-arrow-right text-sm"></i>
+            </button>
+            <button class="button-3d h-7 w-7 flex items-center justify-center" onclick="browserRefresh()">
+              <i class="fa fa-refresh text-sm"></i>
+            </button>
+            <input type="text" id="browser-url" class="button-3d h-7 flex-1 px-2 text-sm" value="https://www.baidu.com">
+            <button class="button-3d h-7 px-2 text-sm" onclick="browserGoToUrl()">
+              前往
+            </button>
+          </div>
+          <div class="flex-1 border border-black overflow-hidden relative">
+            <iframe id="browser-frame" class="w-full h-full" src="https://www.baidu.com" frameborder="0"></iframe>
+          </div>
+        </div>
+      `;
+      
+      // 根据屏幕大小调整浏览器窗口
+      const browserWidth = Math.min(800, window.innerWidth * 0.9);
+      const browserHeight = Math.min(600, window.innerHeight * 0.8);
+      createWindow('浏览器', content, browserWidth, browserHeight, 'fa-globe');
+      
+      // 关闭开始菜单
+      toggleStartMenu();
+    }
+
+    // 浏览器后退
+    function browserGoBack() {
+      const frame = document.getElementById('browser-frame');
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.history.back();
+        
+        // 更新地址栏
+        setTimeout(() => {
+          document.getElementById('browser-url').value = frame.contentWindow.location.href;
+        }, 100);
+      }
+    }
+
+    // 浏览器前进
+    function browserGoForward() {
+      const frame = document.getElementById('browser-frame');
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.history.forward();
+        
+        // 更新地址栏
+        setTimeout(() => {
+          document.getElementById('browser-url').value = frame.contentWindow.location.href;
+        }, 100);
+      }
+    }
+
+    // 浏览器刷新
+    function browserRefresh() {
+      const frame = document.getElementById('browser-frame');
+      if (frame && frame.contentWindow) {
+        frame.contentWindow.location.reload();
+      }
+    }
+
+    // 浏览器前往URL
+    function browserGoToUrl() {
+      const urlInput = document.getElementById('browser-url');
+      const frame = document.getElementById('browser-frame');
+      
+      if (urlInput && frame && frame.contentWindow) {
+        let url = urlInput.value.trim();
+        if (!url.startsWith('http://') && !url.startsWith('https://')) {
+          url = 'https://' + url;
+        }
+        frame.src = url;
+      }
+    }
+
+    // 显示右键菜单 - 修复菜单超出屏幕问题
+    function showContextMenu(x, y) {
+      // 移除已存在的右键菜单
+      hideContextMenu();
+      
+      const contextMenu = document.createElement('div');
+      contextMenu.id = 'desktop-context-menu';
+      contextMenu.className = 'context-menu bg-taskbar button-3d text-sm transition-colors duration-300';
+      
+      // 计算位置，防止菜单超出屏幕
+      const menuWidth = 180;
+      const menuHeight = 140;
+      const posX = x + menuWidth > window.innerWidth ? window.innerWidth - menuWidth - 10 : x;
+      const posY = y + menuHeight > window.innerHeight ? window.innerHeight - menuHeight - 10 : y;
+      
+      contextMenu.style.left = `${posX}px`;
+      contextMenu.style.top = `${posY}px`;
+      
+      contextMenu.innerHTML = `
+        <div class="context-menu-item" onclick="createNewTextFile('desktop')">
+          <i class="fa fa-file-text-o mr-2"></i>新建文本文件
+        </div>
+        <div class="context-menu-item" onclick="openMyComputer()">
+          <i class="fa fa-desktop mr-2"></i>我的电脑
+        </div>
+        <div class="context-menu-item" onclick="openNotepad()">
+          <i class="fa fa-file-text-o mr-2"></i>记事本
+        </div>
+        <div class="context-menu-item" onclick="openCalculator()">
+          <i class="fa fa-calculator mr-2"></i>计算器
+        </div>
+        <div class="context-menu-item" onclick="openBrowser()">
+          <i class="fa fa-globe mr-2"></i>浏览器
+        </div>
+        <div class="context-menu-item" onclick="openSettings()">
+          <i class="fa fa-cog mr-2"></i>设置
+        </div>
+      `;
+      
+      document.body.appendChild(contextMenu);
+      contextMenu.classList.add('show');
+      
+      // 点击菜单后移除
+      contextMenu.addEventListener('click', () => {
+        contextMenu.remove();
+      });
+    }
+
+    // 隐藏右键菜单
+    function hideContextMenu() {
+      const contextMenu = document.getElementById('desktop-context-menu');
+      if (contextMenu) {
+        contextMenu.remove();
+      }
+    }
+
+    // 新增：打开设置窗口
+    function openSettings() {
+      // 检查是否已打开
+      const existingWindow = windows.find(w => w.title === '设置');
+      if (existingWindow) {
+        toggleWindowVisibility(existingWindow.id);
+        toggleStartMenu(); // 关闭开始菜单
+        return;
+      }
+      
+      // 定义主题选项
+      const themeOptions = [
+        { name: "经典蓝", desktop: "#008080", taskbar: "#c0c0c0", windowTitle: "#000080" },
+        { name: "绿色", desktop: "#008000", taskbar: "#c0e0c0", windowTitle: "#004000" },
+        { name: "灰色", desktop: "#808080", taskbar: "#e0e0e0", windowTitle: "#404040" },
+        { name: "紫色", desktop: "#800080", taskbar: "#e0c0e0", windowTitle: "#400040" }
+      ];
+      
+      // 生成主题选项HTML
+      let themeOptionsHtml = '';
+      themeOptions.forEach((theme, index) => {
+        themeOptionsHtml += `
+          <div class="flex items-center mb-2" onclick="selectTheme(${index})">
+            <div class="theme-option" style="background-color: ${theme.desktop};"></div>
+            <span class="text-sm">${theme.name}</span>
+          </div>
+        `;
+      });
+      
+      const content = `
+        <div class="p-4">
+          <h3 class="text-base font-bold mb-4">系统设置</h3>
+          
+          <div class="mb-6">
+            <h4 class="text-sm font-bold mb-2">显示设置</h4>
+            <div class="flex items-center">
+              <input type="checkbox" id="smooth-movement" class="mr-2" ${systemSettings.smoothMovement ? 'checked' : ''}>
+              <label for="smooth-movement" class="text-sm">平滑移动窗口</label>
+            </div>
+          </div>
+          
+          <div>
+            <h4 class="text-sm font-bold mb-2">颜色主题</h4>
+            <div class="pl-2">
+              ${themeOptionsHtml}
+            </div>
+          </div>
+        </div>
+      `;
+      
+      createWindow('设置', content, 400, 300, 'fa-cog');
+      
+      // 添加平滑移动事件监听
+      document.getElementById('smooth-movement').addEventListener('change', function() {
+        systemSettings.smoothMovement = this.checked;
+        
+        // 更新所有窗口的过渡效果
+        windows.forEach(window => {
+          const winElement = document.getElementById(window.id);
+          if (winElement) {
+            if (systemSettings.smoothMovement) {
+              winElement.classList.add('transition-all', 'duration-200');
+            } else {
+              winElement.classList.remove('transition-all', 'duration-200');
+            }
+          }
+        });
+      });
+      
+      // 关闭开始菜单
+      toggleStartMenu();
+    }
+
+    // 新增：选择主题
+    function selectTheme(index) {
+      const themeOptions = [
+        { name: "经典蓝", desktop: "#008080", taskbar: "#c0c0c0", windowTitle: "#000080" },
+        { name: "绿色", desktop: "#008000", taskbar: "#c0e0c0", windowTitle: "#004000" },
+        { name: "灰色", desktop: "#808080", taskbar: "#e0e0e0", windowTitle: "#404040" },
+        { name: "紫色", desktop: "#800080", taskbar: "#e0c0e0", windowTitle: "#400040" }
+      ];
+      
+      const selectedTheme = themeOptions[index];
+      if (selectedTheme) {
+        systemSettings.theme = selectedTheme;
+        
+        // 更新界面颜色
+        document.getElementById('desktop-bg').style.backgroundColor = selectedTheme.desktop;
+        document.getElementById('taskbar').style.backgroundColor = selectedTheme.taskbar;
+        document.getElementById('start-menu').style.backgroundColor = selectedTheme.taskbar;
+        
+        // 更新所有窗口标题栏颜色
+        document.querySelectorAll('.window-title-bar').forEach(bar => {
+          bar.style.backgroundColor = selectedTheme.windowTitle;
+        });
+        
+        // 更新所有按钮和对话框颜色
+        document.querySelectorAll('#save-dialog, #file-menu, .context-menu').forEach(el => {
+          el.style.backgroundColor = selectedTheme.taskbar;
+        });
+        
+        document.querySelectorAll('#save-dialog .bg-window-title').forEach(el => {
+          el.style.backgroundColor = selectedTheme.windowTitle;
+        });
+      }
+    }
+  </script>
+</body>
+</html>
