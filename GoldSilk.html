@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金丝 - HTML编辑器 - 1.0</title>
+    <link rel="icon" href="GSlogo.png" type="image/png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        .editor-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .editor-header {
+            background: #2c3e50;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .editor-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .editor-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        #run-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        #clear-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        #reset-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .editor-body {
+            display: flex;
+            height: calc(100vh - 120px);
+        }
+
+        .editor-panel {
+            flex: 1;
+            padding: 10px;
+            border-right: 1px solid #eee;
+        }
+
+        .preview-panel {
+            flex: 1;
+            padding: 10px;
+        }
+
+        #html-editor {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 10px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            resize: none;
+            outline: none;
+            background: #f9f9f9;
+        }
+
+        #preview-frame {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: white;
+        }
+
+        /* 响应式布局 */
+        @media (max-width: 768px) {
+            .editor-body {
+                flex-direction: column;
+            }
+            .editor-panel, .preview-panel {
+                flex: none;
+                height: 50%;
+            }
+            .editor-panel {
+                border-right: none;
+                border-bottom: 1px solid #eee;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="editor-container">
+        <!-- 编辑器头部 -->
+        <div class="editor-header">
+            <div class="editor-title">金丝 - HTML编辑器</div>
+            <div class="editor-actions">
+                <button id="run-btn">运行代码</button>
+                <button id="clear-btn">清空代码</button>
+                <button id="reset-btn">重置默认</button>
+            </div>
+        </div>
+
+        <!-- 编辑器主体 -->
+        <div class="editor-body">
+            <!-- 代码编辑区 -->
+            <div class="editor-panel">
+                <textarea id="html-editor"></textarea>
+            </div>
+            
+            <!-- 预览区 -->
+            <div class="preview-panel">
+                <iframe id="preview-frame"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const htmlEditor = document.getElementById('html-editor');
+        const previewFrame = document.getElementById('preview-frame');
+        const runBtn = document.getElementById('run-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const resetBtn = document.getElementById('reset-btn');
+
+        // 默认示例代码
+        const defaultCode = `<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>我的第一个页面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+            background: #f0f0f0;
+        }
+        h1 {
+            color: #3498db;
+        }
+    </style>
+</head>
+<body>
+    <h1>欢迎使用金丝 - HTML编辑器！</h1>
+    <p>你可以在这里编辑HTML代码并实时预览效果，帮助您更快捷、方便地修改自己的代码</p>
+</body>
+</html>`;
+
+        // 初始化编辑器
+        function initEditor() {
+            htmlEditor.value = defaultCode;
+            updatePreview();
+        }
+
+        // 更新预览内容
+        function updatePreview() {
+            try {
+                // 获取iframe的document对象
+                const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
+                // 写入HTML代码
+                previewDoc.open();
+                previewDoc.write(htmlEditor.value);
+                previewDoc.close();
+            } catch (error) {
+                alert('预览更新失败：' + error.message);
+            }
+        }
+
+        // 清空代码
+        function clearCode() {
+            if (confirm('确定要清空所有代码吗？')) {
+                htmlEditor.value = '';
+                updatePreview();
+            }
+        }
+
+        // 重置默认代码
+        function resetCode() {
+            if (confirm('确定要恢复默认代码吗？')) {
+                htmlEditor.value = defaultCode;
+                updatePreview();
+            }
+        }
+
+        // 绑定事件
+        runBtn.addEventListener('click', updatePreview);
+        clearBtn.addEventListener('click', clearCode);
+        resetBtn.addEventListener('click', resetCode);
+        
+        // 实时预览（可选）
+        // htmlEditor.addEventListener('input', updatePreview);
+
+        // 页面加载完成后初始化
+        window.addEventListener('load', initEditor);
+    </script>
+</body>
+</html>
