@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>果敢的狂电猴 - 主页 - 2.6</title>
+    <title>果敢的狂电猴 - 主页 - 3.0 - 先行者</title>
     <link rel="icon" href="果敢的狂电猴头.png" type="image/png">
     <!-- 引入Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -245,7 +245,6 @@
             background-color: rgba(255, 234, 0, 0.7);
             animation: float5 5.5s ease-in-out infinite;
         }
-
         /* 返回顶部按钮样式 */
         #back-to-top {
             cursor: pointer;
@@ -263,18 +262,15 @@
             transform: translateY(-5px);
             box-shadow: 0 0 0 5px rgba(26, 0, 75, 0.4), 0 0 15px 5px rgba(26, 0, 75, 0.2);
         }
-
         /* 导航栏渐变深紫色样式 - 更深的紫色 */
         #navbar {
             background: linear-gradient(135deg, #120033 0%, #1A004B 100%);
             backdrop-filter: blur-md;
         }
-
         /* 下拉菜单保持协调的渐变深紫色 */
         #desktop-menu, #about-menu, #mobile-menu, #mobile-menutwo {
             background: linear-gradient(135deg, #120033 0%, #1A004B 100%);
         }
-
         /* 滚动时导航栏的渐变调整 */
         #navbar.scrolled {
             background: linear-gradient(135deg, #120033 0%, #1A004B 100%);
@@ -285,7 +281,7 @@
     <!-- 导航栏 - 合并为一个"导航"并添加图标 -->
     <header id="navbar" class="fixed w-full z-50 transition-all duration-300">
         <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="https://space.bilibili.com/3546703787461385?spm_id_from=333.1007.0.0" class="flex items-center space-x-2 group" target="_blank">
+            <a href="./index.html" class="flex items-center space-x-2 group">
                 <div class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 group-hover:bg-white/30 transition-all duration-300">
                     <img src="果敢的狂电猴头.png" alt="果敢的狂电猴头像" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
                 </div>
@@ -313,8 +309,8 @@
                     <i class="fa fa-info-circle mr-2"></i>关于                              
                     </button>
                     <div id="about-menu" class="hidden absolute top-full right-0 mt-2 w-48 backdrop-blur-md rounded-lg shadow-xl py-2">
-                        <a href="privacy-policy.html" class="block px-4 py-2 text-white hover:text-accent transition-colors">隐私政策</a>
-                        <a href="contact.html" class="block px-4 py-2 text-white hover:text-accent transition-colors">联系作者</a>
+                        <a href="./privacy-policy.html" class="block px-4 py-2 text-white hover:text-accent transition-colors">隐私政策</a>
+                        <a href="./contact.html" class="block px-4 py-2 text-white hover:text-accent transition-colors">联系作者</a>
                     </div>
                 </div>
             </nav>
@@ -323,7 +319,6 @@
             <button id="menu-toggle" class="md:hidden text-white text-2xl">
                 <i class="fa fa-compass mr-2"></i>
             </button>
-
             <button id="menu-two" class="md:hidden text-white text-2xl">
                 <i class="fa fa-info-circle mr-2"></i>
             </button>
@@ -338,17 +333,14 @@
                 <a href="#about" class="text-white hover:text-accent transition-colors py-2">关于我</a>
             </div>
         </div>
-    </header>
-
         <div id="mobile-menutwo" class="hidden md:hidden backdrop-blur-md">
             <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
-                <a href="" class="text-white hover:text-accent transition-colors py-2">水代码</a>
-                <a href="privacy-policy.html" class="text-white hover:text-accent transition-colors py-2">隐私政策</a>
-                <a href="contact.html" class="text-white hover:text-accent transition-colors py-2">联系作者</a>
+                <a href="./water-code.html" class="text-white hover:text-accent transition-colors py-2">水代码</a>
+                <a href="./privacy-policy.html" class="text-white hover:text-accent transition-colors py-2">隐私政策</a>
+                <a href="./contact.html" class="text-white hover:text-accent transition-colors py-2">联系作者</a>
             </div>
         </div>
-    
-
+    </header>
     <!-- 英雄区域 - 添加5个固定位置的动画正方形 -->
     <section class="hero-gradient pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
         <!-- 5个动画正方形 -->
@@ -366,15 +358,14 @@
                 <p class="text-[clamp(1rem,2vw,2rem)] text-white mb-12 max-w-2xl mx-auto">
                     <strong>孤身一人时 会在我们热爱的世界中 找到那个与你志同道合的人</strong>
                 </p>
-
                 <div class="flex flex-col sm:flex-row justify-center gap-4">
                     <a href="#minecraft-mods" class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 flex items-center justify-center">
                         <i class="fa fa-download mr-2"></i> 浏览作品
                     </a>
-                    <a href="https://space.bilibili.com/3546703787461385?spm_id_from=333.1007.0.0" class="bg-transparent border-2 border-white hover:border-accent text-white hover:text-accent font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105" target="_blank">
+                    <a href="./bilibili.html" class="bg-transparent border-2 border-white hover:border-accent text-white hover:text-accent font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105">
                         B站关注me
                     </a>
-                    <a href="https://github.com/BoldElectricMonkey/Monkey-s-github" class="bg-transparent border-2 border-white hover:border-accent text-white hover:text-accent font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105" target="_blank">
+                    <a href="./source-code.html" class="bg-transparent border-2 border-white hover:border-accent text-white hover:text-accent font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105">
                         网站源代码
                     </a>
                 </div>
@@ -388,7 +379,6 @@
             </svg>
         </div>
     </section>
-
     <!-- 我的世界Mod部分 -->
     <section id="minecraft-mods" class="py-16 md:py-24 bg-dark">
         <div class="container mx-auto px-4">
@@ -411,7 +401,7 @@
                         <p class="text-gray-400 mb-4">这是一款以物品拓展、物品融合为主的我的世界Mod。为玩家增添了实用且有趣的物品及装备；玩家可以通过不断的用基础物品融合、下矿、打怪来获得或合成Mod物品或装备，如：青金石粉、究极雷爆天物之剑、死亡镰刀……矿点Mod不仅给玩家提供了丰富的成就感，还为我的世界的探索增添的意义及乐趣。</p>
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
-                            <a href="https://pan.quark.cn/s/ba00004f2a87?pwd=R31g" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
+                            <a href="kuangdianmod-2.0.1-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
                                 <i class="fa fa-download mr-2"></i> 下载
                             </a>
                         </div>
@@ -428,7 +418,7 @@
                         <p class="text-gray-400 mb-4">这是一款结合了现实、游戏食物的我的世界Mod，如冰红茶、坚果……</p>
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
-                            <a href="https://pan.quark.cn/s/7d7472d1b806?pwd=DKdy" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
+                            <a href="full-1.0.1-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
                                 <i class="fa fa-download mr-2"></i> 下载
                             </a>
                         </div>
@@ -445,7 +435,7 @@
                         <p class="text-gray-400 mb-4">这是一款使火焰弹增加了可发射功能的我的世界Mod,点击右键即可发射火焰弹，还原了各大服务器中的“烈焰弹”。</p>
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
-                            <a href="https://pan.quark.cn/s/469b328cd7c9?pwd=JSdJ" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
+                            <a href="launchable_fire_charge-1.0.1-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
                                 <i class="fa fa-download mr-2"></i> 下载
                             </a>
                         </div>
@@ -462,7 +452,7 @@
                         <p class="text-gray-400 mb-4">这是一款还原我的世界的早期版本的附魔金苹果的可合成特性的Mod。</p>
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
-                            <a href="https://pan.quark.cn/s/6575208d3ebf?pwd=tuaH" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
+                            <a href="craftable_enchanted_golden_apple-1.0.0-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
                                 <i class="fa fa-download mr-2"></i> 下载
                             </a>
                         </div>
@@ -479,7 +469,7 @@
                         <p class="text-gray-400 mb-4">这是一款给喜欢冒险与挑战的玩家的一款Mod，提高了我的世界生存模式、冒险模式、极限模式的难度。但请注意！加入此Mod后随着时间可能导致卡顿、未响应、崩溃等情况出现，请谨慎下载！</p>
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
-                            <a href="https://pan.quark.cn/s/f3b1c5445908?pwd=bAbT" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
+                            <a href="entity_jump_but_generate_lava-1.0.0-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
                                 <i class="fa fa-download mr-2"></i> 下载
                             </a>
                         </div>
@@ -496,7 +486,7 @@
                         <p class="text-gray-400 mb-4">这是一款给喜欢冒险与挑战的玩家的一款Mod，提高了我的世界生存模式、冒险模式、极限模式的难度。但值得一提的是，此Mod采用玩家刻更新触发条件来实现Mod效果，所以正常游玩的玩家无法通过指令、其他Mod等方式修改会原版最大生命值，如需恢复，请禁用此Mod。</p>
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
-                            <a href="https://pan.quark.cn/s/ae7070f4b0be?pwd=mbWk" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
+                            <a href="minimum_hp-1.0.0-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
                                 <i class="fa fa-download mr-2"></i> 下载
                             </a>
                         </div>
@@ -513,7 +503,7 @@
                         <p class="text-gray-400 mb-4">这是一款给喜欢冒险与挑战的玩家的一款Mod，提高了我的世界生存模式、冒险模式、极限模式的难度。但请注意！加入此Mod后随着时间可能导致卡顿、未响应、崩溃等情况出现，请谨慎下载！</p>
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
-                            <a href="https://pan.quark.cn/s/a5fe01c519f8?pwd=gbh2" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
+                            <a href="entity_jumps_but_spawns_tnt-1.0.0-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
                                 <i class="fa fa-download mr-2"></i> 下载
                             </a>
                         </div>
@@ -522,17 +512,15 @@
             </div>
         </div>
     </section>
-
-        <!-- 分隔区域 -->
+    <!-- 分隔区域 -->
     <section class="py-16 bg-gradient-to-r from-primary to-secondary text-white">
         <div class="container mx-auto px-4 text-center">
             <p class="text-[clamp(1.2rem,3vw,1.8rem)] font-bold mb-6">持续更新，为你带来更多精彩内容</p>
-            <a href="https://space.bilibili.com/3546703787461385?spm_id_from=333.1007.0.0" class="inline-block bg-accent hover:bg-accent/90 text-dark font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105" target="_blank">
+            <a href="./subscribe.html" class="inline-block bg-accent hover:bg-accent/90 text-dark font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105">
                 <i class="fa fa-bell mr-2"></i>订阅更新通知
             </a>
         </div>
     </section>
-
     <!-- 实用工具部分 -->
     <section id="utilities" class="py-16 md:py-24 bg-dark">
         <div class="container mx-auto px-4">
@@ -556,8 +544,8 @@
                             <p class="text-gray-400">植物大战僵尸系列游戏下载器，集成多个版本，一键跳转至下载链接及作者信息。</p>
                         </div>
                         <div class="flex justify-between items-center mt-4">
-                            <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.6</span>
-                            <a href="https://pan.quark.cn/s/2f0087a7701e?pwd=akgx" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
+                            <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V2.6</span>
+                            <a href="PVZ-Download V2.6.exe" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" download>
                                 <i class="fa fa-download mr-2"></i> 下载
                             </a>
                         </div>
@@ -576,7 +564,7 @@
                         </div>
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.3</span>
-                            <a href="https://pan.quark.cn/s/726b22b2b1b7?pwd=akVw" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
+                            <a href="Work-Out V1.3.exe" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" download>
                                 <i class="fa fa-download mr-2"></i> 下载
                             </a>
                         </div>
@@ -594,7 +582,7 @@
                         </div>
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.0</span>
-                            <a href="https://pan.quark.cn/s/6bc3a3f63908?pwd=Xqxc" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
+                            <a href="狂电抽号器 V1.0.exe" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" download>
                                 <i class="fa fa-download mr-2"></i> 下载
                             </a>
                         </div>
@@ -613,7 +601,7 @@
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.2</span>
                             <a href="https://boldelectricmonkey.github.io/Monkey-s-github/NewFlowerU.html" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
-                                <i class="fa fa-download mr-2"></i> 前往
+                                <i class="fa fa-external-link mr-2"></i> 前往
                             </a>
                         </div>
                     </div>
@@ -631,7 +619,7 @@
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">β2u6</span>
                             <a href="https://boldelectricmonkey.github.io/Monkey-s-github/Menmo.html" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
-                                <i class="fa fa-download mr-2"></i> 前往
+                                <i class="fa fa-external-link mr-2"></i> 前往
                             </a>
                         </div>
                     </div>
@@ -649,7 +637,7 @@
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.0</span>
                             <a href="https://boldelectricmonkey.github.io/Monkey-s-github/FLMP4.html" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
-                                <i class="fa fa-download mr-2"></i> 前往
+                                <i class="fa fa-external-link mr-2"></i> 前往
                             </a>
                         </div>
                     </div>
@@ -667,7 +655,7 @@
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.0.2</span>
                             <a href="IDCheckLogin.html" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
-                                <i class="fa fa-download mr-2"></i> 前往
+                                <i class="fa fa-external-link mr-2"></i> 前往
                             </a>
                         </div>
                     </div>
@@ -685,7 +673,7 @@
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.0</span>
                             <a href="GoldSilk.html" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" target="_blank">
-                                <i class="fa fa-download mr-2"></i> 前往
+                                <i class="fa fa-external-link mr-2"></i> 前往
                             </a>
                         </div>
                     </div>
@@ -693,7 +681,6 @@
             </div>
         </div>
     </section>
-
     <!-- 独立游戏部分 -->
     <section id="indie-games" class="py-16 md:py-24 bg-gradient-to-b from-dark to-gray-900">
         <div class="container mx-auto px-4">
@@ -761,7 +748,6 @@
             </div>
         </div>
     </section>
-
     <!-- 关于部分 -->
     <section id="about" class="py-16 md:py-24 bg-gray-900 text-white">
         <div class="container mx-auto px-4">
@@ -786,7 +772,7 @@
                                 我相信游戏的本质是创造和分享快乐，所以我将我的作品免费分享给大家。（确信）
                             </p>
                             <div class="flex space-x-4">
-                                <a href="https://github.com/BoldElectricMonkey" class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/40 transition-colors" target="_blank">
+                                <a href="./github.html" class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/40 transition-colors">
                                     <i class="fa fa-github text-white"></i>
                                 </a>
                                 <a href="https://space.bilibili.com/3546703787461385?spm_id_from=333.1007.0.0" class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/40 transition-colors" target="_blank">
