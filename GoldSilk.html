@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>金丝 - HTML编辑器 - 1.0</title>
+    <title>金丝 - HTML编辑器 - 2.2</title>
     <link rel="icon" href="GSlogo.png" type="image/png">
     <style>
         * {
@@ -80,36 +80,65 @@
             height: calc(100vh - 120px);
         }
 
-        .editor-panel {
+        .editor-panel, .preview-panel {
             flex: 1;
             padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .editor-panel {
             border-right: 1px solid #eee;
         }
 
-        .preview-panel {
-            flex: 1;
-            padding: 10px;
+        /* 区域底部全屏按钮 */
+        .area-full-btn {
+            align-self: center;
+            background: #6c757d;
+            color: #fff;
+            padding: 6px 12px;
+            font-size: 13px;
         }
 
+        /* 代码编辑器样式 + 横向滚动条 */
         #html-editor {
             width: 100%;
-            height: 100%;
+            flex: 1;
             border: 1px solid #ddd;
             border-radius: 4px;
             padding: 10px;
             font-family: 'Consolas', 'Monaco', monospace;
             font-size: 14px;
-            resize: none;
-            outline: none;
             background: #f9f9f9;
+            outline: none;
+            white-space: pre;
+            overflow-x: auto;
+            overflow-y: auto;
+            resize: none;
         }
 
         #preview-frame {
             width: 100%;
-            height: 100%;
+            flex: 1;
             border: 1px solid #ddd;
             border-radius: 4px;
             background: white;
+        }
+
+        /* ESC退出提示 */
+        .esc-tip {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            z-index: 99999;
+            display: none;
         }
 
         /* 响应式布局 */
@@ -129,8 +158,10 @@
     </style>
 </head>
 <body>
+    <!-- 全屏ESC提示 -->
+    <div class="esc-tip">按 ESC 退出全屏</div>
+
     <div class="editor-container">
-        <!-- 编辑器头部 -->
         <div class="editor-header">
             <div class="editor-title">金丝 - HTML编辑器</div>
             <div class="editor-actions">
@@ -140,27 +171,33 @@
             </div>
         </div>
 
-        <!-- 编辑器主体 -->
         <div class="editor-body">
             <!-- 代码编辑区 -->
-            <div class="editor-panel">
+            <div class="editor-panel" id="codeWrap">
                 <textarea id="html-editor"></textarea>
+                <button class="area-full-btn" id="codeFullBtn">⛶ 代码区全屏</button>
             </div>
             
             <!-- 预览区 -->
-            <div class="preview-panel">
+            <div class="preview-panel" id="previewWrap">
                 <iframe id="preview-frame"></iframe>
+                <button class="area-full-btn" id="previewFullBtn">⛶ 预览区全屏</button>
             </div>
         </div>
     </div>
 
     <script>
-        // 获取DOM元素
         const htmlEditor = document.getElementById('html-editor');
         const previewFrame = document.getElementById('preview-frame');
         const runBtn = document.getElementById('run-btn');
         const clearBtn = document.getElementById('clear-btn');
         const resetBtn = document.getElementById('reset-btn');
+
+        const codeWrap = document.getElementById('codeWrap');
+        const previewWrap = document.getElementById('previewWrap');
+        const codeFullBtn = document.getElementById('codeFullBtn');
+        const previewFullBtn = document.getElementById('previewFullBtn');
+        const escTip = document.querySelector('.esc-tip');
 
         // 默认示例代码
         const defaultCode = `<!DOCTYPE html>
@@ -182,22 +219,20 @@
 </head>
 <body>
     <h1>欢迎使用金丝 - HTML编辑器！</h1>
-    <p>你可以在这里编辑HTML代码并实时预览效果，帮助您更快捷、方便地修改自己的代码</p>
+    <p>你可以在这里编辑HTML代码并实时预览效果</p>
 </body>
 </html>`;
 
-        // 初始化编辑器
+        // 初始化
         function initEditor() {
             htmlEditor.value = defaultCode;
             updatePreview();
         }
 
-        // 更新预览内容
+        // 更新预览
         function updatePreview() {
             try {
-                // 获取iframe的document对象
                 const previewDoc = previewFrame.contentDocument || previewFrame.contentWindow.document;
-                // 写入HTML代码
                 previewDoc.open();
                 previewDoc.write(htmlEditor.value);
                 previewDoc.close();
@@ -214,7 +249,7 @@
             }
         }
 
-        // 重置默认代码
+        // 重置默认
         function resetCode() {
             if (confirm('确定要恢复默认代码吗？')) {
                 htmlEditor.value = defaultCode;
@@ -222,15 +257,32 @@
             }
         }
 
+        // 进入全屏 + 显示提示
+        function enterFull(el) {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+                return;
+            }
+            el.requestFullscreen().then(() => {
+                escTip.style.display = 'block';
+            });
+        }
+
+        // 监听退出全屏，隐藏提示
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                escTip.style.display = 'none';
+            }
+        });
+
         // 绑定事件
         runBtn.addEventListener('click', updatePreview);
         clearBtn.addEventListener('click', clearCode);
         resetBtn.addEventListener('click', resetCode);
-        
-        // 实时预览（可选）
-        // htmlEditor.addEventListener('input', updatePreview);
 
-        // 页面加载完成后初始化
+        codeFullBtn.addEventListener('click', () => enterFull(codeWrap));
+        previewFullBtn.addEventListener('click', () => enterFull(previewWrap));
+
         window.addEventListener('load', initEditor);
     </script>
 </body>
