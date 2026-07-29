@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menmo - β2u6</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script>
+        // Tailwind 自定义配置
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        windows: {
+                            blue: '#0078d7',
+                            dark: '#1a1a1a',
+                            taskbar: '#2b2b2b',
+                            window: '#ffffff',
+                            windowHeader: '#f0f0f0',
+                            gray: '#eaeaea',
+                            darkGray: '#888888',
+                            startMenu: '#323232',
+                            startMenuHover: '#484848',
+                            // 深色主题颜色
+                            darkWindow: '#1c1c1c',
+                            darkWindowHeader: '#2d2d2d',
+                            darkGrayBg: '#252525',
+                            darkText: '#f0f0f0'
+                        }
+                    },
+                    boxShadow: {
+                        'window': '0 4px 20px rgba(0, 0, 0, 0.25)',
+                        'button': '0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24)'
+                    },
+                    borderRadius: {
+                        'window': '6px',
+                        'button': '2px'
+                    }
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .window-drag {
+                -webkit-app-region: drag;
+            }
+            .window-no-drag {
+                -webkit-app-region: no-drag;
+            }
+            .scrollbar-windows {
+                scrollbar-width: thin;
+                scrollbar-color: #888 #eee;
+            }
+            .scrollbar-windows::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+            .scrollbar-windows::-webkit-scrollbar-track {
+                background: #eee;
+                border-radius: 4px;
+            }
+            .scrollbar-windows::-webkit-scrollbar-thumb {
+                background: #888;
+                border-radius: 4px;
+            }
+            .scrollbar-windows::-webkit-scrollbar-thumb:hover {
+                background: #666;
+            }
+            /* 深色主题滚动条 */
+            .scrollbar-windows-dark {
+                scrollbar-width: thin;
+                scrollbar-color: #666 #333;
+            }
+            .scrollbar-windows-dark::-webkit-scrollbar {
+                width: 8px;
+                height: 8px;
+            }
+            .scrollbar-windows-dark::-webkit-scrollbar-track {
+                background: #333;
+                border-radius: 4px;
+            }
+            .scrollbar-windows-dark::-webkit-scrollbar-thumb {
+                background: #666;
+                border-radius: 4px;
+            }
+            .scrollbar-windows-dark::-webkit-scrollbar-thumb:hover {
+                background: #888;
+            }
+            
+            .text-shadow {
+                text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+            }
+            .window-border {
+                border: 1px solid #e0e0e0;
+            }
+            /* 深色主题边框 */
+            .window-border-dark {
+                border: 1px solid #333;
+            }
+            
+            .btn-windows {
+                @apply bg-windows-gray hover:bg-gray-300 active:bg-gray-400 transition-colors duration-100 rounded-button shadow-button;
+            }
+            /* 深色主题按钮 */
+            .btn-windows-dark {
+                @apply bg-windows-darkGrayBg hover:bg-gray-600 active:bg-gray-700 text-white transition-colors duration-100 rounded-button shadow-button;
+            }
+            
+            .btn-windows-blue {
+                @apply bg-windows-blue hover:bg-[#0063b1] active:bg-[#005096] text-white transition-colors duration-100 rounded-button shadow-button;
+            }
+        }
+    </style>
+</head>
+<body class="overflow-hidden bg-cover bg-center h-screen w-screen" style="background-image: url('https://picsum.photos/id/1015/1920/1080');" id="desktop-body">
+    <!-- 桌面容器 -->
+    <div id="desktop" class="absolute top-0 left-0 w-full h-full pb-48">
+        <!-- 桌面图标 -->
+        <div class="grid grid-cols-auto gap-6 p-8">
+            <div class="desktop-icon flex flex-col items-center w-20 cursor-pointer hover:bg-white/10 p-2 rounded transition-colors" data-app="mycomputer">
+                <i class="fa fa-desktop text-4xl text-white text-shadow"></i>
+                <span class="text-white text-center mt-2 text-shadow">我的电脑</span>
+            </div>
+            <div class="desktop-icon flex flex-col items-center w-20 cursor-pointer hover:bg-white/10 p-2 rounded transition-colors" data-app="browser">
+                <i class="fa fa-chrome text-4xl text-white text-shadow"></i>
+                <span class="text-white text-center mt-2 text-shadow">浏览器</span>
+            </div>
+            <div class="desktop-icon flex flex-col items-center w-20 cursor-pointer hover:bg-white/10 p-2 rounded transition-colors" data-app="calculator">
+                <i class="fa fa-calculator text-4xl text-white text-shadow"></i>
+                <span class="text-white text-center mt-2 text-shadow">计算器</span>
+            </div>
+            <div class="desktop-icon flex flex-col items-center w-20 cursor-pointer hover:bg-white/10 p-2 rounded transition-colors" data-app="notepad">
+                <i class="fa fa-file-text-o text-4xl text-white text-shadow"></i>
+                <span class="text-white text-center mt-2 text-shadow">记事本</span>
+            </div>
+            <div class="desktop-icon flex flex-col items-center w-20 cursor-pointer hover:bg-white/10 p-2 rounded transition-colors" data-app="settings">
+                <i class="fa fa-cog text-4xl text-white text-shadow"></i>
+                <span class="text-white text-center mt-2 text-shadow">设置</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 任务栏 -->
+    <div id="taskbar" class="fixed bottom-0 left-0 w-full h-12 bg-windows-taskbar/90 backdrop-blur-sm flex items-center px-2 z-50 border-t border-gray-700">
+        <!-- 开始菜单按钮 -->
+        <button id="startMenuBtn" class="w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded transition-colors window-no-drag">
+            <i class="fa fa-windows text-white text-xl"></i>
+        </button>
+        
+        <!-- 任务栏图标 -->
+        <div class="flex items-center ml-2">
+            <div class="taskbar-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded transition-colors cursor-pointer window-no-drag" data-app="mycomputer">
+                <i class="fa fa-desktop text-white"></i>
+            </div>
+            <div class="taskbar-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded transition-colors cursor-pointer window-no-drag" data-app="browser">
+                <i class="fa fa-chrome text-white"></i>
+            </div>
+            <div class="taskbar-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded transition-colors cursor-pointer window-no-drag" data-app="calculator">
+                <i class="fa fa-calculator text-white"></i>
+            </div>
+            <div class="taskbar-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded transition-colors cursor-pointer window-no-drag" data-app="notepad">
+                <i class="fa fa-file-text-o text-white"></i>
+            </div>
+            <div class="taskbar-icon w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded transition-colors cursor-pointer window-no-drag" data-app="settings">
+                <i class="fa fa-cog text-white"></i>
+            </div>
+        </div>
+        
+        <!-- 右侧系统托盘 -->
+        <div class="ml-auto flex items-center pr-4">
+            <div class="text-white text-sm mr-4 window-no-drag" id="datetime">
+                2024-01-01 12:00
+            </div>
+            <div class="w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded transition-colors window-no-drag">
+                <i class="fa fa-volume-up text-white"></i>
+            </div>
+            <div class="w-10 h-10 flex items-center justify-center hover:bg-white/10 rounded transition-colors window-no-drag">
+                <i class="fa fa-wifi text-white"></i>
+            </div>
+        </div>
+    </div>
+
+    <!-- 开始菜单 -->
+    <div id="startMenu" class="fixed bottom-12 left-0 w-80 h-96 bg-windows-startMenu rounded-tr-lg rounded-br-lg shadow-lg transform -translate-y-full transition-transform duration-200 z-40 hidden">
+        <div class="p-4 text-white">
+            <div class="font-bold mb-4">开始菜单</div>
+            <div class="space-y-2">
+                <div class="flex items-center p-2 hover:bg-windows-startMenuHover rounded cursor-pointer" data-app="mycomputer">
+                    <i class="fa fa-desktop mr-3"></i>
+                    <span>我的电脑</span>
+                </div>
+                <div class="flex items-center p-2 hover:bg-windows-startMenuHover rounded cursor-pointer" data-app="browser">
+                    <i class="fa fa-chrome mr-3"></i>
+                    <span>浏览器</span>
+                </div>
+                <div class="flex items-center p-2 hover:bg-windows-startMenuHover rounded cursor-pointer" data-app="calculator">
+                    <i class="fa fa-calculator mr-3"></i>
+                    <span>计算器</span>
+                </div>
+                <div class="flex items-center p-2 hover:bg-windows-startMenuHover rounded cursor-pointer" data-app="notepad">
+                    <i class="fa fa-file-text-o mr-3"></i>
+                    <span>记事本</span>
+                </div>
+                <div class="flex items-center p-2 hover:bg-windows-startMenuHover rounded cursor-pointer" data-app="settings">
+                    <i class="fa fa-cog mr-3"></i>
+                    <span>设置</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 窗口容器 -->
+    <div id="windowsContainer" class="absolute top-0 left-0 w-full h-full pointer-events-none pb-12">
+        <!-- 窗口模板 (不会显示，仅用于克隆) -->
+        <div id="windowTemplate" class="fixed rounded-window shadow-window bg-windows-window window-border hidden pointer-events-auto" style="width: 800px; height: 600px; top: 100px; left: 100px; z-index: 10;">
+            <!-- 窗口头部 -->
+            <div class="window-header h-10 bg-windows-windowHeader rounded-t-window flex items-center justify-between px-2 window-drag border-b border-gray-200">
+                <div class="flex items-center">
+                    <i class="fa fa-desktop mr-2 window-no-drag"></i>
+                    <span class="window-title window-no-drag">窗口标题</span>
+                </div>
+                <div class="flex items-center window-no-drag">
+                    <button class="window-minimize w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded transition-colors">
+                        <i class="fa fa-minus text-sm"></i>
+                    </button>
+                    <button class="window-maximize w-8 h-8 flex items-center justify-center hover:bg-gray-200 rounded transition-colors">
+                        <i class="fa fa-square-o text-sm"></i>
+                    </button>
+                    <button class="window-close w-8 h-8 flex items-center justify-center hover:bg-red-500 hover:text-white rounded transition-colors">
+                        <i class="fa fa-times text-sm"></i>
+                    </button>
+                </div>
+            </div>
+            <!-- 窗口内容 -->
+            <div class="window-content h-[calc(100%-40px)] overflow-auto scrollbar-windows p-4">
+                窗口内容
+            </div>
+        </div>
+
+        <!-- 我的电脑窗口内容 - 制作中提示 -->
+        <div id="mycomputerContent" class="hidden">
+            <div class="flex items-center justify-center h-full">
+                <div class="text-center">
+                    <i class="fa fa-cogs text-6xl text-windows-blue mb-6"></i>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">制作中，敬请期待</h2>
+                    <p class="text-gray-500">该功能正在开发中，即将上线...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 浏览器窗口内容 -->
+        <div id="browserContent" class="hidden">
+            <div class="flex flex-col h-full">
+                <!-- 浏览器工具栏 -->
+                <div class="bg-gray-100 p-2 border-b border-gray-200">
+                    <div class="flex items-center space-x-2">
+                        <button class="browser-back btn-windows px-2 py-1">
+                            <i class="fa fa-arrow-left mr-1"></i>
+                        </button>
+                        <button class="browser-forward btn-windows px-2 py-1">
+                            <i class="fa fa-arrow-right mr-1"></i>
+                        </button>
+                        <button class="browser-refresh btn-windows px-2 py-1">
+                            <i class="fa fa-refresh mr-1"></i>
+                        </button>
+                        <div class="flex-1 relative">
+                            <input type="text" class="browser-address w-full px-3 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-windows-blue focus:border-windows-blue" placeholder="输入网址..." value="about:blank">
+                            <button class="absolute right-2 top-1/2 transform -translate-y-1/2">
+                                <i class="fa fa-search text-gray-500"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 浏览器内容区域 - 使用iframe加载真实网页 -->
+                <div class="flex-1 bg-white overflow-auto browser-view">
+                    <iframe id="browser-iframe" class="w-full h-full border-0" src="about:blank"></iframe>
+                </div>
+            </div>
+        </div>
+
+        <!-- 计算器窗口内容 -->
+        <div id="calculatorContent" class="hidden">
+            <div class="w-80 mx-auto">
+                <!-- 计算器显示 -->
+                <div class="bg-gray-100 p-4 mb-4 rounded border border-gray-200 text-right">
+                    <div class="calc-history text-sm text-gray-500 mb-1 min-h-[20px]">0</div>
+                    <div class="calc-display text-3xl font-medium min-h-[48px]">0</div>
+                </div>
+
+                <!-- 计算器按钮 -->
+                <div class="grid grid-cols-4 gap-2">
+                    <!-- 第一行 -->
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value="AC">AC</button>
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value="+/-">+/-</button>
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value="%">%</button>
+                    <button class="calc-btn btn-windows py-3 text-lg bg-orange-100 hover:bg-orange-200 active:bg-orange-300" data-value="/">÷</button>
+                    
+                    <!-- 第二行 -->
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value="7">7</button>
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value="8">8</button>
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value="9">9</button>
+                    <button class="calc-btn btn-windows py-3 text-lg bg-orange-100 hover:bg-orange-200 active:bg-orange-300" data-value="*">×</button>
+                    
+                    <!-- 第三行 -->
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value="4">4</button>
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value="5">5</button>
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value="6">6</button>
+                    <button class="calc-btn btn-windows py-3 text-lg bg-orange-100 hover:bg-orange-200 active:bg-orange-300" data-value="-">-</button>
+                    
+                    <!-- 第四行 -->
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value="1">1</button>
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value="2">2</button>
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value="3">3</button>
+                    <button class="calc-btn btn-windows py-3 text-lg bg-orange-100 hover:bg-orange-200 active:bg-orange-300" data-value="+">+</button>
+                    
+                    <!-- 第五行 -->
+                    <button class="calc-btn btn-windows py-3 text-lg col-span-2" data-value="0">0</button>
+                    <button class="calc-btn btn-windows py-3 text-lg" data-value=".">.</button>
+                    <button class="calc-btn btn-windows py-3 text-lg bg-orange-100 hover:bg-orange-200 active:bg-orange-300" data-value="=">=</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 记事本窗口内容 -->
+        <div id="notepadContent" class="hidden">
+            <div class="flex flex-col h-full">
+                <!-- 记事本工具栏 -->
+                <div class="bg-gray-100 p-2 border-b border-gray-200">
+                    <button class="notepad-save btn-windows-blue px-3 py-1 mr-2">
+                        <i class="fa fa-save mr-1"></i> 保存
+                    </button>
+                    <button class="notepad-clear btn-windows px-3 py-1">
+                        <i class="fa fa-trash mr-1"></i> 清空
+                    </button>
+                </div>
+
+                <!-- 记事本编辑区域 -->
+                <div class="flex-1">
+                    <textarea class="notepad-editor w-full h-full p-4 border-0 focus:outline-none resize-none scrollbar-windows" placeholder="在此输入文本..."></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- 设置窗口内容 - 深浅主题切换 -->
+        <div id="settingsContent" class="hidden">
+            <div class="space-y-6">
+                <!-- 显示设置 -->
+                <div class="border border-gray-200 rounded p-4">
+                    <h3 class="font-bold text-lg mb-3">显示设置</h3>
+                    <div class="mb-4">
+                        <label class="block mb-2 text-sm font-medium">屏幕分辨率</label>
+                        <select class="settings-resolution w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-windows-blue focus:border-windows-blue">
+                            <option value="1920x1080">1920 × 1080 (推荐)</option>
+                            <option value="1600x900">1600 × 900</option>
+                            <option value="1366x768">1366 × 768</option>
+                            <option value="1280x720">1280 × 720</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">缩放比例</label>
+                        <div class="flex items-center space-x-2">
+                            <span>100%</span>
+                            <input type="range" min="100" max="150" step="10" value="100" class="settings-scale w-full">
+                            <span>150%</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 声音设置 -->
+                <div class="border border-gray-200 rounded p-4">
+                    <h3 class="font-bold text-lg mb-3">声音设置</h3>
+                    <div>
+                        <div class="flex justify-between mb-2">
+                            <label class="text-sm font-medium">音量</label>
+                            <span class="settings-volume-value">75%</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fa fa-volume-up text-gray-500"></i>
+                            <input type="range" min="0" max="100" value="75" class="settings-volume w-full">
+                            <i class="fa fa-volume-off text-gray-500"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 个性化设置 - 深浅主题切换 -->
+                <div class="border border-gray-200 rounded p-4">
+                    <h3 class="font-bold text-lg mb-3">个性化设置</h3>
+                    <div class="mb-4">
+                        <label class="block mb-2 text-sm font-medium">桌面背景</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <button class="bg-change-btn h-20 bg-cover bg-center rounded border-2 border-transparent hover:border-windows-blue" data-bg="https://picsum.photos/id/1015/1920/1080"></button>
+                            <button class="bg-change-btn h-20 bg-cover bg-center rounded border-2 border-transparent hover:border-windows-blue" data-bg="https://picsum.photos/id/1019/1920/1080"></button>
+                            <button class="bg-change-btn h-20 bg-cover bg-center rounded border-2 border-transparent hover:border-windows-blue" data-bg="https://picsum.photos/id/1039/1920/1080"></button>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block mb-2 text-sm font-medium">主题模式</label>
+                        <div class="flex space-x-4">
+                            <!-- 浅色主题按钮 -->
+                            <button class="theme-mode-btn flex items-center justify-center px-6 py-3 rounded-lg border-2 border-transparent hover:border-windows-blue bg-white text-gray-800 shadow-md w-32" data-theme="light">
+                                <i class="fa fa-sun-o mr-2 text-yellow-500"></i>
+                                <span>浅色主题</span>
+                            </button>
+                            <!-- 深色主题按钮 -->
+                            <button class="theme-mode-btn flex items-center justify-center px-6 py-3 rounded-lg border-2 border-transparent hover:border-windows-blue bg-gray-800 text-white shadow-md w-32" data-theme="dark">
+                                <i class="fa fa-moon-o mr-2 text-blue-300"></i>
+                                <span>深色主题</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let activeWindows = {};
+        let zIndexCounter = 10;
+        let currentDesktopBg = 'https://picsum.photos/id/1015/1920/1080';
+        let currentThemeColor = '#0078d7';
+        // 当前主题模式变量
+        let currentThemeMode = 'light';
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 更新时间日期
+            updateDateTime();
+            setInterval(updateDateTime, 60000);
+
+            // 初始化背景按钮
+            initBackgroundButtons();
+            
+            // 初始化主题模式按钮状态
+            initThemeModeButtons();
+
+            // 绑定事件
+            bindEvents();
+
+            // 加载记事本保存的内容
+            loadNotepadContent();
+        });
+
+        // 更新时间日期
+        function updateDateTime() {
+            const now = new Date();
+            const date = now.toLocaleDateString('zh-CN', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            const time = now.toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+            document.getElementById('datetime').textContent = `${date} ${time}`;
+        }
+
+        // 初始化背景按钮
+        function initBackgroundButtons() {
+            const bgButtons = document.querySelectorAll('.bg-change-btn');
+            bgButtons.forEach(btn => {
+                const bgUrl = btn.getAttribute('data-bg');
+                btn.style.backgroundImage = `url(${bgUrl})`;
+                
+                // 设置默认选中状态
+                if (bgUrl === currentDesktopBg) {
+                    btn.classList.add('border-windows-blue');
+                }
+            });
+        }
+        
+        // 初始化主题模式按钮状态
+        function initThemeModeButtons() {
+            // 默认选中浅色主题
+            document.querySelector('[data-theme="light"]').classList.add('border-windows-blue');
+        }
+
+        // 绑定所有事件
+        function bindEvents() {
+            // 桌面图标点击
+            document.querySelectorAll('.desktop-icon').forEach(icon => {
+                icon.addEventListener('click', function() {
+                    const appName = this.getAttribute('data-app');
+                    openAppWindow(appName);
+                });
+            });
+
+            // 任务栏图标点击
+            document.querySelectorAll('.taskbar-icon').forEach(icon => {
+                icon.addEventListener('click', function() {
+                    const appName = this.getAttribute('data-app');
+                    openAppWindow(appName);
+                });
+            });
+
+            // 开始菜单点击
+            document.getElementById('startMenuBtn').addEventListener('click', toggleStartMenu);
+            
+            // 开始菜单项点击
+            document.querySelectorAll('#startMenu [data-app]').forEach(item => {
+                item.addEventListener('click', function() {
+                    const appName = this.getAttribute('data-app');
+                    openAppWindow(appName);
+                    closeStartMenu();
+                });
+            });
+
+            // 点击桌面关闭开始菜单
+            document.getElementById('desktop').addEventListener('click', closeStartMenu);
+
+            // 计算器按钮点击
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('calc-btn')) {
+                    // 获取当前点击按钮所在的计算器窗口
+                    const calculatorWindow = e.target.closest('#window-calculator');
+                    if (calculatorWindow) {
+                        // 传入计算器窗口元素，确保找到正确的显示区域
+                        handleCalculatorInput(e.target.getAttribute('data-value'), calculatorWindow);
+                    }
+                }
+            });
+
+            // 记事本保存按钮
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('notepad-save') || e.target.parentElement.classList.contains('notepad-save')) {
+                    saveNotepadContent();
+                }
+                if (e.target.classList.contains('notepad-clear') || e.target.parentElement.classList.contains('notepad-clear')) {
+                    clearNotepadContent();
+                }
+            });
+
+            // 浏览器地址栏
+            document.addEventListener('keypress', function(e) {
+                if (e.target.classList.contains('browser-address') && e.key === 'Enter') {
+                    loadBrowserUrl(e.target.value, e.target.closest('.window-content').querySelector('#browser-iframe'));
+                }
+            });
+
+            // 浏览器按钮
+            document.addEventListener('click', function(e) {
+                // 后退按钮
+                if (e.target.classList.contains('browser-back') || e.target.parentElement.classList.contains('browser-back')) {
+                    const iframe = e.target.closest('.window-content').querySelector('#browser-iframe');
+                    if (iframe.contentWindow.history.length > 1) {
+                        iframe.contentWindow.history.back();
+                    }
+                }
+                // 前进按钮
+                if (e.target.classList.contains('browser-forward') || e.target.parentElement.classList.contains('browser-forward')) {
+                    const iframe = e.target.closest('.window-content').querySelector('#browser-iframe');
+                    iframe.contentWindow.history.forward();
+                }
+                // 刷新按钮
+                if (e.target.classList.contains('browser-refresh') || e.target.parentElement.classList.contains('browser-refresh')) {
+                    const iframe = e.target.closest('.window-content').querySelector('#browser-iframe');
+                    iframe.contentWindow.location.reload();
+                }
+            });
+
+            // 设置页面控件
+            // 音量滑块
+            const volumeSlider = document.querySelector('.settings-volume');
+            if (volumeSlider) {
+                volumeSlider.addEventListener('input', function() {
+                    document.querySelector('.settings-volume-value').textContent = `${this.value}%`;
+                });
+            }
+
+            // 背景切换按钮
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('bg-change-btn')) {
+                    // 移除所有选中状态
+                    document.querySelectorAll('.bg-change-btn').forEach(btn => {
+                        btn.classList.remove('border-windows-blue');
+                    });
+                    // 添加当前选中状态
+                    e.target.classList.add('border-windows-blue');
+                    
+                    // 切换背景
+                    currentDesktopBg = e.target.getAttribute('data-bg');
+                    document.body.style.backgroundImage = `url(${currentDesktopBg})`;
+                }
+            });
+
+            // 主题模式切换事件
+            document.addEventListener('click', function(e) {
+                if (e.target.classList.contains('theme-mode-btn') || e.target.closest('.theme-mode-btn')) {
+                    const btn = e.target.closest('.theme-mode-btn');
+                    const themeMode = btn.getAttribute('data-theme');
+                    
+                    // 移除所有选中状态
+                    document.querySelectorAll('.theme-mode-btn').forEach(b => {
+                        b.classList.remove('border-windows-blue');
+                    });
+                    // 添加当前选中状态
+                    btn.classList.add('border-windows-blue');
+                    
+                    // 切换主题模式
+                    switchThemeMode(themeMode);
+                }
+            });
+        }
+
+        // 切换主题模式
+        function switchThemeMode(mode) {
+            currentThemeMode = mode;
+            
+            // 获取所有打开的窗口
+            const allWindows = document.querySelectorAll('#windowsContainer > div:not(#windowTemplate)');
+            
+            if (mode === 'dark') {
+                // 切换到深色主题
+                // 更新所有窗口样式
+                allWindows.forEach(windowEl => {
+                    // 窗口背景
+                    windowEl.classList.remove('bg-windows-window');
+                    windowEl.classList.add('bg-windows-darkWindow');
+                    
+                    // 窗口边框
+                    windowEl.classList.remove('window-border');
+                    windowEl.classList.add('window-border-dark');
+                    
+                    // 窗口头部
+                    const header = windowEl.querySelector('.window-header');
+                    if (header) {
+                        header.classList.remove('bg-windows-windowHeader', 'border-gray-200');
+                        header.classList.add('bg-windows-darkWindowHeader', 'border-gray-700');
+                    }
+                    
+                    // 窗口标题文字颜色
+                    const title = windowEl.querySelector('.window-title');
+                    if (title) {
+                        title.classList.add('text-white');
+                    }
+                    
+                    // 窗口控制按钮悬停效果
+                    const windowControls = windowEl.querySelectorAll('.window-minimize, .window-maximize');
+                    windowControls.forEach(control => {
+                        control.classList.remove('hover:bg-gray-200');
+                        control.classList.add('hover:bg-gray-700');
+                    });
+                    
+                    // 滚动条样式
+                    const content = windowEl.querySelector('.window-content');
+                    if (content) {
+                        content.classList.remove('scrollbar-windows');
+                        content.classList.add('scrollbar-windows-dark');
+                        content.classList.add('text-white');
+                    }
+                    
+                    // 适配不同应用的深色样式
+                    // 计算器
+                    if (windowEl.id === 'window-calculator') {
+                        const calcDisplay = windowEl.querySelector('.calc-display').parentElement;
+                        if (calcDisplay) {
+                            calcDisplay.classList.remove('bg-gray-100', 'border-gray-200');
+                            calcDisplay.classList.add('bg-windows-darkGrayBg', 'border-gray-700');
+                        }
+                        const calcBtns = windowEl.querySelectorAll('.calc-btn:not([data-value="/"]):not([data-value="*"]):not([data-value="-"]):not([data-value="+"]):not([data-value="="])');
+                        calcBtns.forEach(btn => {
+                            btn.classList.remove('btn-windows');
+                            btn.classList.add('btn-windows-dark');
+                        });
+                    }
+                    
+                    // 记事本
+                    if (windowEl.id === 'window-notepad') {
+                        const editor = windowEl.querySelector('.notepad-editor');
+                        if (editor) {
+                            editor.classList.remove('scrollbar-windows');
+                            editor.classList.add('scrollbar-windows-dark', 'bg-windows-darkGrayBg', 'text-white');
+                        }
+                        const toolbar = windowEl.querySelector('.bg-gray-100');
+                        if (toolbar) {
+                            toolbar.classList.remove('bg-gray-100', 'border-gray-200');
+                            toolbar.classList.add('bg-windows-darkGrayBg', 'border-gray-700');
+                        }
+                    }
+                    
+                    // 浏览器
+                    if (windowEl.id === 'window-browser') {
+                        const toolbar = windowEl.querySelector('.bg-gray-100');
+                        if (toolbar) {
+                            toolbar.classList.remove('bg-gray-100', 'border-gray-200');
+                            toolbar.classList.add('bg-windows-darkGrayBg', 'border-gray-700');
+                        }
+                        const addressBar = windowEl.querySelector('.browser-address');
+                        if (addressBar) {
+                            addressBar.classList.remove('border-gray-300', 'text-black');
+                            addressBar.classList.add('border-gray-700', 'bg-gray-800', 'text-white');
+                        }
+                        const browserView = windowEl.querySelector('.browser-view');
+                        if (browserView) {
+                            browserView.classList.remove('bg-white');
+                            browserView.classList.add('bg-gray-900');
+                        }
+                    }
+                    
+                    // 设置
+                    if (windowEl.id === 'window-settings') {
+                        const settingsPanels = windowEl.querySelectorAll('.border-gray-200');
+                        settingsPanels.forEach(panel => {
+                            panel.classList.remove('border-gray-200');
+                            panel.classList.add('border-gray-700', 'bg-windows-darkGrayBg');
+                        });
+                        const settingsLabels = windowEl.querySelectorAll('label, h3, h4, .font-medium, .text-gray-600');
+                        settingsLabels.forEach(label => {
+                            label.classList.add('text-white');
+                            label.classList.remove('text-gray-600');
+                        });
+                        const select = windowEl.querySelector('select');
+                        if (select) {
+                            select.classList.remove('border-gray-300', 'text-black');
+                            select.classList.add('border-gray-700', 'bg-gray-800', 'text-white');
+                        }
+                        const rangeInputs = windowEl.querySelectorAll('input[type="range"]');
+                        rangeInputs.forEach(input => {
+                            input.classList.add('bg-gray-700');
+                        });
+                    }
+                    
+                    // 我的电脑
+                    if (windowEl.id === 'window-mycomputer') {
+                        // 适配制作中提示的深色样式
+                        const tipText = windowEl.querySelector('.text-gray-800');
+                        if (tipText) {
+                            tipText.classList.remove('text-gray-800');
+                            tipText.classList.add('text-white');
+                        }
+                        const subText = windowEl.querySelector('.text-gray-500');
+                        if (subText) {
+                            subText.classList.remove('text-gray-500');
+                            subText.classList.add('text-gray-300');
+                        }
+                    }
+                });
+                
+                // 开始菜单深色样式
+                const startMenu = document.getElementById('startMenu');
+                startMenu.classList.add('bg-gray-900');
+                startMenu.classList.remove('bg-windows-startMenu');
+                
+            } else {
+                // 切换到浅色主题（恢复默认样式）
+                allWindows.forEach(windowEl => {
+                    // 恢复窗口背景
+                    windowEl.classList.remove('bg-windows-darkWindow');
+                    windowEl.classList.add('bg-windows-window');
+                    
+                    // 恢复窗口边框
+                    windowEl.classList.remove('window-border-dark');
+                    windowEl.classList.add('window-border');
+                    
+                    // 恢复窗口头部
+                    const header = windowEl.querySelector('.window-header');
+                    if (header) {
+                        header.classList.remove('bg-windows-darkWindowHeader', 'border-gray-700');
+                        header.classList.add('bg-windows-windowHeader', 'border-gray-200');
+                    }
+                    
+                    // 恢复标题文字颜色
+                    const title = windowEl.querySelector('.window-title');
+                    if (title) {
+                        title.classList.remove('text-white');
+                    }
+                    
+                    // 恢复窗口控制按钮
+                    const windowControls = windowEl.querySelectorAll('.window-minimize, .window-maximize');
+                    windowControls.forEach(control => {
+                        control.classList.remove('hover:bg-gray-700');
+                        control.classList.add('hover:bg-gray-200');
+                    });
+                    
+                    // 恢复滚动条
+                    const content = windowEl.querySelector('.window-content');
+                    if (content) {
+                        content.classList.remove('scrollbar-windows-dark', 'text-white');
+                        content.classList.add('scrollbar-windows');
+                    }
+                    
+                    // 恢复计算器样式
+                    if (windowEl.id === 'window-calculator') {
+                        const calcDisplay = windowEl.querySelector('.calc-display').parentElement;
+                        if (calcDisplay) {
+                            calcDisplay.classList.remove('bg-windows-darkGrayBg', 'border-gray-700');
+                            calcDisplay.classList.add('bg-gray-100', 'border-gray-200');
+                        }
+                        const calcBtns = windowEl.querySelectorAll('.calc-btn:not([data-value="/"]):not([data-value="*"]):not([data-value="-"]):not([data-value="+"]):not([data-value="="])');
+                        calcBtns.forEach(btn => {
+                            btn.classList.remove('btn-windows-dark');
+                            btn.classList.add('btn-windows');
+                        });
+                    }
+                    
+                    // 恢复记事本样式
+                    if (windowEl.id === 'window-notepad') {
+                        const editor = windowEl.querySelector('.notepad-editor');
+                        if (editor) {
+                            editor.classList.remove('scrollbar-windows-dark', 'bg-windows-darkGrayBg', 'text-white');
+                            editor.classList.add('scrollbar-windows');
+                        }
+                        const toolbar = windowEl.querySelector('.bg-windows-darkGrayBg');
+                        if (toolbar) {
+                            toolbar.classList.remove('bg-windows-darkGrayBg', 'border-gray-700');
+                            toolbar.classList.add('bg-gray-100', 'border-gray-200');
+                        }
+                    }
+                    
+                    // 恢复浏览器样式
+                    if (windowEl.id === 'window-browser') {
+                        const toolbar = windowEl.querySelector('.bg-windows-darkGrayBg');
+                        if (toolbar) {
+                            toolbar.classList.remove('bg-windows-darkGrayBg', 'border-gray-700');
+                            toolbar.classList.add('bg-gray-100', 'border-gray-200');
+                        }
+                        const addressBar = windowEl.querySelector('.browser-address');
+                        if (addressBar) {
+                            addressBar.classList.remove('border-gray-700', 'bg-gray-800', 'text-white');
+                            addressBar.classList.add('border-gray-300');
+                        }
+                        const browserView = windowEl.querySelector('.browser-view');
+                        if (browserView) {
+                            browserView.classList.remove('bg-gray-900');
+                            browserView.classList.add('bg-white');
+                        }
+                    }
+                    
+                    // 恢复设置样式
+                    if (windowEl.id === 'window-settings') {
+                        const settingsPanels = windowEl.querySelectorAll('.border-gray-700, .bg-windows-darkGrayBg');
+                        settingsPanels.forEach(panel => {
+                            panel.classList.remove('border-gray-700', 'bg-windows-darkGrayBg');
+                            panel.classList.add('border-gray-200');
+                        });
+                        const settingsLabels = windowEl.querySelectorAll('label, h3, h4, .font-medium');
+                        settingsLabels.forEach(label => {
+                            label.classList.remove('text-white');
+                        });
+                        const select = windowEl.querySelector('select');
+                        if (select) {
+                            select.classList.remove('border-gray-700', 'bg-gray-800', 'text-white');
+                            select.classList.add('border-gray-300');
+                        }
+                        const rangeInputs = windowEl.querySelectorAll('input[type="range"]');
+                        rangeInputs.forEach(input => {
+                            input.classList.remove('bg-gray-700');
+                        });
+                    }
+                    
+                    // 恢复我的电脑样式
+                    if (windowEl.id === 'window-mycomputer') {
+                        const tipText = windowEl.querySelector('.text-white');
+                        if (tipText) {
+                            tipText.classList.remove('text-white');
+                            tipText.classList.add('text-gray-800');
+                        }
+                        const subText = windowEl.querySelector('.text-gray-300');
+                        if (subText) {
+                            subText.classList.remove('text-gray-300');
+                            subText.classList.add('text-gray-500');
+                        }
+                    }
+                });
+                
+                // 恢复开始菜单浅色样式
+                const startMenu = document.getElementById('startMenu');
+                startMenu.classList.remove('bg-gray-900');
+                startMenu.classList.add('bg-windows-startMenu');
+            }
+        }
+
+        // 打开应用窗口
+        function openAppWindow(appName) {
+            // 检查窗口是否已打开
+            if (activeWindows[appName]) {
+                // 窗口已存在，置顶显示
+                bringWindowToFront(activeWindows[appName]);
+                return;
+            }
+
+            // 克隆窗口模板
+            const template = document.getElementById('windowTemplate');
+            const newWindow = template.cloneNode(true);
+            
+            // 移除模板ID，添加新ID
+            newWindow.removeAttribute('id');
+            newWindow.id = `window-${appName}`;
+            newWindow.classList.remove('hidden');
+            
+            // 设置窗口标题和图标
+            const appTitles = {
+                mycomputer: '我的电脑',
+                browser: '浏览器',
+                calculator: '计算器',
+                notepad: '记事本',
+                settings: '设置'
+            };
+            
+            const appIcons = {
+                mycomputer: 'fa-desktop',
+                browser: 'fa-chrome',
+                calculator: 'fa-calculator',
+                notepad: 'fa-file-text-o',
+                settings: 'fa-cog'
+            };
+            
+            newWindow.querySelector('.window-title').textContent = appTitles[appName];
+            newWindow.querySelector('.window-header i').className = `fa ${appIcons[appName]} mr-2 window-no-drag`;
+            
+            // 设置窗口内容
+            const contentElement = document.getElementById(`${appName}Content`);
+            if (contentElement) {
+                newWindow.querySelector('.window-content').innerHTML = contentElement.innerHTML;
+            }
+            
+            // 调整计算器窗口大小
+            if (appName === 'calculator') {
+                newWindow.style.width = '400px';
+                newWindow.style.height = '500px';
+            }
+            
+            // 随机位置（确保不会超出顶部）
+            const randomX = 50 + Math.floor(Math.random() * (window.innerWidth - 450));
+            const randomY = Math.max(10, 50 + Math.floor(Math.random() * (window.innerHeight - 450))); // 确保y坐标至少为10
+            newWindow.style.left = `${randomX}px`;
+            newWindow.style.top = `${randomY}px`;
+            
+            // 设置z-index
+            zIndexCounter++;
+            newWindow.style.zIndex = zIndexCounter;
+            
+            // 添加到容器
+            document.getElementById('windowsContainer').appendChild(newWindow);
+            
+            // 如果当前是深色主题，新窗口也应用深色样式
+            if (currentThemeMode === 'dark') {
+                // 应用深色主题样式
+                newWindow.classList.remove('bg-windows-window');
+                newWindow.classList.add('bg-windows-darkWindow');
+                newWindow.classList.remove('window-border');
+                newWindow.classList.add('window-border-dark');
+                
+                const header = newWindow.querySelector('.window-header');
+                header.classList.remove('bg-windows-windowHeader', 'border-gray-200');
+                header.classList.add('bg-windows-darkWindowHeader', 'border-gray-700');
+                
+                const title = newWindow.querySelector('.window-title');
+                title.classList.add('text-white');
+                
+                const windowControls = newWindow.querySelectorAll('.window-minimize, .window-maximize');
+                windowControls.forEach(control => {
+                    control.classList.remove('hover:bg-gray-200');
+                    control.classList.add('hover:bg-gray-700');
+                });
+                
+                const content = newWindow.querySelector('.window-content');
+                content.classList.remove('scrollbar-windows');
+                content.classList.add('scrollbar-windows-dark', 'text-white');
+                
+                // 根据不同应用适配深色样式
+                if (appName === 'calculator') {
+                    const calcDisplay = newWindow.querySelector('.calc-display').parentElement;
+                    calcDisplay.classList.remove('bg-gray-100', 'border-gray-200');
+                    calcDisplay.classList.add('bg-windows-darkGrayBg', 'border-gray-700');
+                    const calcBtns = newWindow.querySelectorAll('.calc-btn:not([data-value="/"]):not([data-value="*"]):not([data-value="-"]):not([data-value="+"]):not([data-value="="])');
+                    calcBtns.forEach(btn => {
+                        btn.classList.remove('btn-windows');
+                        btn.classList.add('btn-windows-dark');
+                    });
+                }
+                
+                if (appName === 'notepad') {
+                    const editor = newWindow.querySelector('.notepad-editor');
+                    editor.classList.remove('scrollbar-windows');
+                    editor.classList.add('scrollbar-windows-dark', 'bg-windows-darkGrayBg', 'text-white');
+                    const toolbar = newWindow.querySelector('.bg-gray-100');
+                    toolbar.classList.remove('bg-gray-100', 'border-gray-200');
+                    toolbar.classList.add('bg-windows-darkGrayBg', 'border-gray-700');
+                }
+                
+                if (appName === 'browser') {
+                    const toolbar = newWindow.querySelector('.bg-gray-100');
+                    toolbar.classList.remove('bg-gray-100', 'border-gray-200');
+                    toolbar.classList.add('bg-windows-darkGrayBg', 'border-gray-700');
+                    const addressBar = newWindow.querySelector('.browser-address');
+                    addressBar.classList.remove('border-gray-300');
+                    addressBar.classList.add('border-gray-700', 'bg-gray-800', 'text-white');
+                    const browserView = newWindow.querySelector('.browser-view');
+                    browserView.classList.remove('bg-white');
+                    browserView.classList.add('bg-gray-900');
+                }
+                
+                if (appName === 'settings') {
+                    const settingsPanels = newWindow.querySelectorAll('.border-gray-200');
+                    settingsPanels.forEach(panel => {
+                        panel.classList.remove('border-gray-200');
+                        panel.classList.add('border-gray-700', 'bg-windows-darkGrayBg');
+                    });
+                    const settingsLabels = newWindow.querySelectorAll('label, h3, h4, .font-medium, .text-gray-600');
+                    settingsLabels.forEach(label => {
+                        label.classList.add('text-white');
+                        label.classList.remove('text-gray-600');
+                    });
+                    const select = newWindow.querySelector('select');
+                    select.classList.remove('border-gray-300');
+                    select.classList.add('border-gray-700', 'bg-gray-800', 'text-white');
+                    const rangeInputs = newWindow.querySelectorAll('input[type="range"]');
+                    rangeInputs.forEach(input => {
+                        input.classList.add('bg-gray-700');
+                    });
+                }
+                
+                if (appName === 'mycomputer') {
+                    // 适配制作中提示的深色样式
+                    const tipText = newWindow.querySelector('.text-gray-800');
+                    if (tipText) {
+                        tipText.classList.remove('text-gray-800');
+                        tipText.classList.add('text-white');
+                    }
+                    const subText = newWindow.querySelector('.text-gray-500');
+                    if (subText) {
+                        subText.classList.remove('text-gray-500');
+                        subText.classList.add('text-gray-300');
+                    }
+                }
+            }
+            
+            // 绑定窗口控制事件
+            bindWindowControls(newWindow);
+            
+            // 绑定窗口点击置顶
+            newWindow.addEventListener('mousedown', function() {
+                bringWindowToFront(this);
+            });
+            
+            // 记录活跃窗口
+            activeWindows[appName] = newWindow;
+        }
+
+        // 绑定窗口控制事件（最小化、最大化、关闭）
+        function bindWindowControls(windowElement) {
+            // 最小化
+            windowElement.querySelector('.window-minimize').addEventListener('click', function() {
+                windowElement.style.display = 'none';
+            });
+            
+            // 最大化/还原 - 全屏显示
+            const maximizeBtn = windowElement.querySelector('.window-maximize');
+            maximizeBtn.addEventListener('click', function() {
+                const isMaximized = windowElement.classList.contains('maximized');
+                
+                if (isMaximized) {
+                    // 还原
+                    windowElement.classList.remove('maximized');
+                    windowElement.style.width = windowElement.getAttribute('data-original-width') || '800px';
+                    windowElement.style.height = windowElement.getAttribute('data-original-height') || '600px';
+                    windowElement.style.left = windowElement.getAttribute('data-original-left') || '100px';
+                    windowElement.style.top = windowElement.getAttribute('data-original-top') || '100px';
+                    windowElement.style.borderRadius = '6px'; // 恢复圆角
+                    maximizeBtn.innerHTML = '<i class="fa fa-square-o text-sm"></i>';
+                    // 恢复任务栏显示
+                    document.getElementById('taskbar').style.display = 'flex';
+                } else {
+                    // 最大化 - 铺满整个屏幕
+                    windowElement.classList.add('maximized');
+                    windowElement.setAttribute('data-original-width', windowElement.style.width);
+                    windowElement.setAttribute('data-original-height', windowElement.style.height);
+                    windowElement.setAttribute('data-original-left', windowElement.style.left);
+                    windowElement.setAttribute('data-original-top', windowElement.style.top);
+                    
+                    // 全屏显示，覆盖整个屏幕（包括任务栏区域）
+                    windowElement.style.width = `${window.innerWidth}px`;
+                    windowElement.style.height = `${window.innerHeight}px`;
+                    windowElement.style.left = '0px';
+                    windowElement.style.top = '0px';
+                    windowElement.style.borderRadius = '0px'; // 移除圆角
+                    maximizeBtn.innerHTML = '<i class="fa fa-clone text-sm"></i>';
+                    // 隐藏任务栏
+                    document.getElementById('taskbar').style.display = 'none';
+                }
+            });
+            
+            // 关闭
+            windowElement.querySelector('.window-close').addEventListener('click', function() {
+                const appName = windowElement.id.replace('window-', '');
+                // 恢复任务栏显示
+                document.getElementById('taskbar').style.display = 'flex';
+                delete activeWindows[appName];
+                windowElement.remove();
+            });
+
+            // 窗口拖动功能
+            makeWindowDraggable(windowElement);
+        }
+
+        // 窗口拖动功能 - 拖动时自动置顶 + 空气墙限制
+        function makeWindowDraggable(windowElement) {
+            let isDragging = false;
+            let dragStartX, dragStartY, windowStartX, windowStartY;
+            
+            const header = windowElement.querySelector('.window-header');
+            
+            header.addEventListener('mousedown', function(e) {
+                // 阻止事件冒泡，避免触发窗口置顶
+                e.stopPropagation();
+                
+                // 只允许左键拖动
+                if (e.button !== 0) return;
+                
+                // 如果是最大化状态，点击标题栏直接还原
+                if (windowElement.classList.contains('maximized')) {
+                    windowElement.classList.remove('maximized');
+                    windowElement.style.width = windowElement.getAttribute('data-original-width') || '800px';
+                    windowElement.style.height = windowElement.getAttribute('data-original-height') || '600px';
+                    windowElement.style.left = windowElement.getAttribute('data-original-left') || '100px';
+                    windowElement.style.top = windowElement.getAttribute('data-original-top') || '100px';
+                    windowElement.style.borderRadius = '6px';
+                    windowElement.querySelector('.window-maximize').innerHTML = '<i class="fa fa-square-o text-sm"></i>';
+                    document.getElementById('taskbar').style.display = 'flex';
+                    return;
+                }
+                
+                isDragging = true;
+                
+                // 记录初始位置
+                dragStartX = e.clientX;
+                dragStartY = e.clientY;
+                windowStartX = parseInt(windowElement.style.left);
+                windowStartY = parseInt(windowElement.style.top);
+                
+                // 添加拖动样式
+                header.style.cursor = 'move';
+                
+                // 绑定移动和释放事件
+                document.addEventListener('mousemove', onDragMove);
+                document.addEventListener('mouseup', onDragEnd);
+                
+                // 拖动开始时立即置顶
+                bringWindowToFront(windowElement);
+            });
+            
+            function onDragMove(e) {
+                if (!isDragging) return;
+                
+                // 计算偏移量
+                const dx = e.clientX - dragStartX;
+                const dy = e.clientY - dragStartY;
+                
+                // 计算新位置
+                let newLeft = windowStartX + dx;
+                let newTop = windowStartY + dy;
+                
+                // 空气墙限制：顶部不能小于0（防止窗口头部超出上边缘）
+                newTop = Math.max(0, newTop);
+                // 右侧和底部也做简单限制，防止完全超出可视区域
+                newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - 100));
+                newTop = Math.min(newTop, window.innerHeight - 100);
+                
+                // 更新窗口位置
+                windowElement.style.left = `${newLeft}px`;
+                windowElement.style.top = `${newTop}px`;
+                
+                // 拖动过程中持续保持窗口置顶（核心修改）
+                bringWindowToFront(windowElement);
+            }
+            
+            function onDragEnd() {
+                isDragging = false;
+                header.style.cursor = '';
+                
+                // 移除事件监听
+                document.removeEventListener('mousemove', onDragMove);
+                document.removeEventListener('mouseup', onDragEnd);
+                
+                // 拖动结束后也确保窗口置顶
+                bringWindowToFront(windowElement);
+            }
+        }
+
+        // 窗口置顶核心函数
+        function bringWindowToFront(windowElement) {
+            zIndexCounter++;
+            windowElement.style.zIndex = zIndexCounter;
+            windowElement.style.display = 'block'; // 确保窗口显示
+        }
+
+        // 切换开始菜单
+        function toggleStartMenu() {
+            const startMenu = document.getElementById('startMenu');
+            startMenu.classList.toggle('hidden');
+            if (!startMenu.classList.contains('hidden')) {
+                startMenu.style.transform = 'translateY(0)';
+            } else {
+                startMenu.style.transform = 'translateY(-full)';
+            }
+        }
+
+        // 关闭开始菜单
+        function closeStartMenu() {
+            const startMenu = document.getElementById('startMenu');
+            startMenu.classList.add('hidden');
+            startMenu.style.transform = 'translateY(-full)';
+        }
+
+        // 计算器逻辑 - 为每个窗口维护独立状态
+        let calculatorStates = {
+            default: {
+                currentValue: '0',
+                history: '',
+                operator: '',
+                reset: false
+            }
+        };
+
+        // 计算器输入处理函数
+        function handleCalculatorInput(value, calculatorWindow) {
+            // 获取当前计算器窗口的唯一标识
+            const windowId = calculatorWindow.id;
+            
+            // 初始化该窗口的计算器状态
+            if (!calculatorStates[windowId]) {
+                calculatorStates[windowId] = {
+                    currentValue: '0',
+                    history: '',
+                    operator: '',
+                    reset: false
+                };
+            }
+            
+            // 获取当前窗口的显示元素
+            const display = calculatorWindow.querySelector('.calc-display');
+            const history = calculatorWindow.querySelector('.calc-history');
+            const state = calculatorStates[windowId];
+            
+            // 数字键
+            if (/[0-9]/.test(value)) {
+                if (state.currentValue === '0' || state.reset) {
+                    state.currentValue = value;
+                    state.reset = false;
+                } else {
+                    state.currentValue += value;
+                }
+                display.textContent = state.currentValue;
+            }
+            
+            // 小数点
+            else if (value === '.') {
+                if (!state.currentValue.includes('.') && !state.reset) {
+                    state.currentValue += '.';
+                    display.textContent = state.currentValue;
+                } else if (state.reset) {
+                    state.currentValue = '0.';
+                    state.reset = false;
+                    display.textContent = state.currentValue;
+                }
+            }
+            
+            // 运算符
+            else if (['+', '-', '*', '/'].includes(value)) {
+                if (state.operator && !state.reset) {
+                    // 计算上一次的运算
+                    calculateResult(windowId);
+                }
+                state.history = `${state.currentValue} ${value}`;
+                history.textContent = state.history;
+                state.operator = value;
+                state.reset = true;
+            }
+            
+            // 等号
+            else if (value === '=') {
+                calculateResult(windowId);
+                state.history = '';
+                history.textContent = '0';
+                state.operator = '';
+            }
+            
+            // AC 清空
+            else if (value === 'AC') {
+                state.currentValue = '0';
+                state.history = '';
+                state.operator = '';
+                state.reset = false;
+                display.textContent = state.currentValue;
+                history.textContent = '0';
+            }
+            
+            // 正负号
+            else if (value === '+/-') {
+                if (state.currentValue !== '0') {
+                    state.currentValue = state.currentValue.startsWith('-') 
+                        ? state.currentValue.substring(1) 
+                        : `-${state.currentValue}`;
+                    display.textContent = state.currentValue;
+                }
+            }
+            
+            // 百分号
+            else if (value === '%') {
+                state.currentValue = (parseFloat(state.currentValue) / 100).toString();
+                display.textContent = state.currentValue;
+            }
+        }
+
+        // 计算结果函数
+        function calculateResult(windowId) {
+            const calculatorWindow = document.getElementById(windowId);
+            const display = calculatorWindow.querySelector('.calc-display');
+            const state = calculatorStates[windowId];
+            
+            let result = 0;
+            const num1 = parseFloat(state.history);
+            const num2 = parseFloat(state.currentValue);
+            
+            switch (state.operator) {
+                case '+':
+                    result = num1 + num2;
+                    break;
+                case '-':
+                    result = num1 - num2;
+                    break;
+                case '*':
+                    result = num1 * num2;
+                    break;
+                case '/':
+                    result = num2 !== 0 ? num1 / num2 : '错误';
+                    break;
+            }
+            
+            state.currentValue = result.toString();
+            display.textContent = state.currentValue;
+            state.reset = true;
+        }
+
+        // 记事本功能
+        function saveNotepadContent() {
+            const editor = document.querySelector('.notepad-editor');
+            if (editor) {
+                localStorage.setItem('notepadContent', editor.value);
+                alert('内容已保存！');
+            }
+        }
+
+        function loadNotepadContent() {
+            const savedContent = localStorage.getItem('notepadContent');
+            if (savedContent) {
+                // 当记事本窗口打开时加载内容
+                document.addEventListener('DOMNodeInserted', function(e) {
+                    if (e.target.classList.contains('notepad-editor')) {
+                        e.target.value = savedContent;
+                    }
+                });
+            }
+        }
+
+        function clearNotepadContent() {
+            const editor = document.querySelector('.notepad-editor');
+            if (editor && confirm('确定要清空内容吗？')) {
+                editor.value = '';
+            }
+        }
+
+        // 浏览器功能 - 使用iframe加载真实网页
+        function loadBrowserUrl(url, iframeElement) {
+            // 获取对应的地址栏
+            const addressBar = iframeElement.closest('.window-content').querySelector('.browser-address');
+            
+            // 补全URL前缀
+            let fullUrl = url;
+            if (url && !url.startsWith('http://') && !url.startsWith('https://') && url !== 'about:blank') {
+                fullUrl = 'https://' + url;
+                addressBar.value = fullUrl;
+            }
+            
+            // 设置iframe的src来加载真实网页
+            try {
+                iframeElement.src = fullUrl;
+            } catch (error) {
+                // 加载失败时显示错误信息
+                iframeElement.src = 'about:blank';
+                iframeElement.contentDocument.body.innerHTML = `<div class="min-h-full flex items-center justify-center"><div class="text-center p-8"><i class="fa fa-exclamation-triangle text-6xl text-red-500 mb-4"></i><h2 class="text-2xl font-medium text-gray-700 mb-2">加载失败</h2><p class="text-gray-500">无法访问网址: ${url}</p></div></div>`;
+            }
+        }
+    </script>
+</body>
+</html>

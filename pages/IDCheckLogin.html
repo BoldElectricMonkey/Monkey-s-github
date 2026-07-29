@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IDCheck - 入口</title>
+    <link rel="icon" href="IDlogo.png" type="image/png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        /* 头部区域 */
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            color: #333;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* 主容器 */
+        .container {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 800px;
+            width: 100%;
+        }
+
+        /* 入口卡片 */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+            padding: 40px 30px;
+            width: 350px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .card-icon.web {
+            color: #409eff;
+        }
+
+        .card-icon.exe {
+            color: #67c23a;
+        }
+
+        .card h2 {
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .card p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-web {
+            background-color: #409eff;
+            color: white;
+        }
+
+        .btn-web:hover {
+            background-color: #337ecc;
+        }
+
+        .btn-exe {
+            background-color: #67c23a;
+            color: white;
+        }
+
+        .btn-exe:hover {
+            background-color: #529b2e;
+        }
+
+        /* 底部信息 */
+        .footer {
+            margin-top: 60px;
+            text-align: center;
+            color: #777;
+            font-size: 14px;
+        }
+
+        .footer p {
+            margin-bottom: 8px;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .container {
+                gap: 20px;
+            }
+
+            .card {
+                width: 100%;
+                max-width: 350px;
+            }
+
+            .header h1 {
+                font-size: 26px;
+            }
+        }
+    </style>
+    <!-- 引入图标库 -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 头部标题区域 -->
+    <div class="header">
+        <h1>IDCheck</h1>
+        <p>便捷、准确、安全的身份证号码校验工具，支持网页版在线使用和桌面版下载</p>
+    </div>
+
+    <!-- 主入口容器 -->
+    <div class="container">
+        <!-- 网页版入口卡片 -->
+        <div class="card">
+            <div class="card-icon web">
+                <i class="fas fa-globe"></i>
+            </div>
+            <h2>网页版</h2>
+            <p>无需下载安装，直接在线使用，支持所有设备访问，数据仅本地处理，安全可靠</p>
+            <a href="IDCheckWeb.html" class="btn btn-web">前往使用</a>
+        </div>
+
+        <!-- EXE版入口卡片 -->
+        <div class="card">
+            <div class="card-icon exe">
+                <i class="fas fa-download"></i>
+            </div>
+            <h2>桌面版 (EXE)</h2>
+            <p>下载安装到Windows电脑，离线使用，无需网络，计算速度更快，体验更流畅</p>
+            <a href="https://pan.quark.cn/s/0d911aad83e4#/list/share" class="btn btn-exe">立即下载</a>
+        </div>
+    </div>
+
+    <!-- 底部信息 -->
+    <div class="footer">
+        <p>隐私声明：所有数据仅在本地处理，不会上传至任何服务器。若对我的产品没有信心，可以点<a href="https://www.baidu.com/s?wd=身份证校验码计算公式" target="_blue">此处</a>学习身份证校验方法，自己动手丰衣足食！</p>
+    </div>
+</body>
+</html>
