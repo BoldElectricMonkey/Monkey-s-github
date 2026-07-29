@@ -1,0 +1,144 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background-color: #121212;
+    color: #E0E0E0;
+    font-family: theme('fontFamily.sans');
+}
+
+/* 通用渐变与分割线 */
+.hero-gradient {
+    background: linear-gradient(135deg, #121212 0%, #1E1E1E 50%, #2D2D2D 100%);
+}
+.section-divider {
+    position: relative;
+    height: 80px;
+    overflow: hidden;
+}
+.section-divider::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 100'%3E%3Cpath fill='%23121212' fill-opacity='1' d='M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,100L1360,100C1280,100,1120,100,960,100C800,100,640,100,480,100C320,100,160,100,80,100L0,100Z'%3E%3C/path%3E%3C/svg%3E") no-repeat center / cover;
+}
+
+/* 卡片通用样式 */
+.mod-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    margin-bottom: 2rem;
+    background-color: #1E1E1E;
+    border: 3px solid transparent;
+}
+#minecraft-mods .mod-card:hover {
+    border-color: #B026FF;
+    box-shadow: 0 0 0 5px rgba(176, 38, 255, 0.4), 0 0 15px 5px rgba(176, 38, 255, 0.2);
+}
+#utilities .mod-card:hover {
+    border-color: #FF3D00;
+    box-shadow: 0 0 0 5px rgba(255, 61, 0, 0.4), 0 0 15px 5px rgba(255, 61, 0, 0.2);
+}
+#indie-games .mod-card:hover {
+    border-color: #FFEA00;
+    box-shadow: 0 0 0 5px rgba(255, 234, 0, 0.4), 0 0 15px 5px rgba(255, 234, 0, 0.2);
+}
+
+/* 下载按钮动画 */
+.download-btn {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+.mod-card:hover .download-btn {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 关于我卡片流光动画 */
+#about .bg-gray-800 {
+    transition: all 0.6s ease;
+    border: 3px solid transparent;
+    position: relative;
+    overflow: hidden;
+}
+#about .bg-gray-800::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, #FF3D00, #FFEA00, #B026FF, transparent);
+    background-size: 200% 100%;
+    transition: all 0.8s ease;
+    z-index: -1;
+}
+#about .bg-gray-800:hover {
+    border-image: linear-gradient(90deg, #FF3D00, #FFEA00, #B026FF) 1;
+    box-shadow: 0 0 15px rgba(255, 61, 0, 0.6), 0 0 30px rgba(255, 234, 0, 0.4), 0 0 45px rgba(176, 38, 255, 0.6);
+}
+#about .bg-gray-800:hover::before {
+    left: 100%;
+}
+
+/* 加载/脉冲动画 */
+.loader {
+    border-top-color: #B026FF;
+    animation: spinner 0.6s linear infinite;
+}
+@keyframes spinner {
+    to { transform: rotate(360deg); }
+}
+@keyframes pulse {
+    0%,100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+/* 漂浮方块动画 */
+.hero-square {
+    position: absolute;
+    width: 60px;
+    height: 60px;
+    z-index: 1;
+    pointer-events: none;
+}
+@keyframes float1 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(10px,10px); } }
+@keyframes float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-10px,10px); } }
+@keyframes float3 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(10px,-10px); } }
+@keyframes float4 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-10px,-10px); } }
+@keyframes float5 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(15px,5px); } }
+.square-1 { top:20%; left:5%; background:rgba(176,38,255,0.7); animation:float1 4s ease-in-out infinite; }
+.square-2 { top:40%; right:8%; background:rgba(255,61,0,0.7); animation:float2 5s ease-in-out infinite; }
+.square-3 { bottom:30%; left:10%; background:rgba(176,38,255,0.5); animation:float3 3.5s ease-in-out infinite; }
+.square-4 { top:30%; right:15%; background:rgba(255,61,0,0.5); animation:float4 4.5s ease-in-out infinite; }
+.square-5 { bottom:20%; right:5%; background:rgba(255,234,0,0.7); animation:float5 5.5s ease-in-out infinite; }
+
+/* 返回顶部按钮 */
+#back-to-top {
+    cursor: pointer;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+#back-to-top.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+#back-to-top:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 0 5px rgba(26, 0, 75, 0.4), 0 0 15px 5px rgba(26, 0, 75, 0.2);
+}
+
+/* 导航栏样式统一 */
+.nav-gradient {
+    background: linear-gradient(135deg, #120033 0%, #1A004B 100%);
+}
+.nav-menu {
+    background: linear-gradient(135deg, #120033 0%, #1A004B 100%);
+}
