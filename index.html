@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- SEO优化 -->
+    <meta name="description" content="果敢的狂电猴个人主页，我的世界Mod、实用工具、独立游戏免费下载分享站">
+    <meta name="keywords" content="我的世界Mod,MC模组,实用工具,独立游戏,Scratch游戏">
+    <title>果敢的狂电猴 - 主页 - 3.0</title>
+    <link rel="icon" href="./src/assets/images/果敢的狂电猴头.png" type="image/png">
+    <!-- 外部CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <!-- 预加载字体 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <!-- Tailwind全局配置（仅配置，无样式） -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#B026FF',
+                        secondary: '#FF3D00',
+                        accent: '#FFEA00',
+                        dark: '#121212',
+                        light: '#E0E0E0',
+                        purpleLight: '#9C27B0',
+                        purpleDark: '#7B1FA2',
+                        deepPurple: {
+                            950: '#120033',
+                            900: '#1A004B',
+                            800: '#2A006E',
+                            700: '#3A0088',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        display: ['"Press Start 2P"', 'cursive'],
+                    },
+                }
+            }
+        }
+    </script>
+
+    <!-- Tailwind自定义工具（无法抽离外部css） -->
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto { content-visibility: auto; }
+            .text-shadow { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5); }
+            .card-hover { transition: all 0.3s ease; }
+            .card-hover:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2), 0 10px 10px -5px rgba(0,0,0,0.1); }
+            .blur-nav { backdrop-filter: blur(8px); }
+        }
+    </style>
+
+    <!-- 外部独立样式 -->
+    <link rel="stylesheet" href="./src/css/main.css">
+</head>
+<body class="font-sans">
+    <!-- 导航栏 -->
+    <header id="navbar" class="fixed w-full z-50 transition-all duration-300 nav-gradient blur-nav">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <a href="./index.html" class="flex items-center space-x-2 group">
+                <div class="w-10 h-10 flex items-center justify-center rounded-full bg-white/20 group-hover:bg-white/30 transition-all duration-300">
+                    <img loading="lazy" src="./src/assets/images/果敢的狂电猴头.png" alt="头像" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
+                </div>
+                <h1 class="text-xl md:text-2xl font-display text-white group-hover:text-accent transition-colors duration-300">果敢的狂电猴</h1>
+            </a>
+
+            <!-- 桌面端导航 -->
+            <nav class="hidden md:flex items-center space-x-4">
+                <!-- 作品导航下拉 -->
+                <div class="relative nav-dropdown">
+                    <button class="nav-toggle text-white hover:text-accent transition-colors flex items-center">
+                        <i class="fa fa-compass mr-2"></i>导航
+                    </button>
+                    <div class="nav-menu dropdown-panel hidden absolute top-full right-0 mt-2 w-48 rounded-lg shadow-xl py-2">
+                        <a href="#minecraft-mods" class="block px-4 py-2 text-white hover:text-accent transition-colors">《我的世界》Mod</a>
+                        <a href="#utilities" class="block px-4 py-2 text-white hover:text-accent transition-colors">实用工具</a>
+                        <a href="#indie-games" class="block px-4 py-2 text-white hover:text-accent transition-colors">独立游戏</a>
+                        <a href="#about" class="block px-4 py-2 text-white hover:text-accent transition-colors">关于我</a>
+                    </div>
+                </div>
+                <!-- 关于下拉 -->
+                <div class="relative nav-dropdown">
+                    <button class="about-toggle text-white hover:text-accent transition-colors flex items-center">
+                        <i class="fa fa-info-circle mr-2"></i>关于
+                    </button>
+                    <div class="nav-menu about-panel hidden absolute top-full right-0 mt-2 w-48 rounded-lg shadow-xl py-2">
+                        <a href="pages/privacy-policy.html" class="block px-4 py-2 text-white hover:text-accent transition-colors">隐私政策</a>
+                        <a href="pages/contact.html" class="block px-4 py-2 text-white hover:text-accent transition-colors">联系作者</a>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- 移动端按钮 -->
+            <div class="md:hidden flex gap-3">
+                <button id="menu-toggle" class="text-white text-2xl">
+                    <i class="fa fa-compass"></i>
+                </button>
+                <button id="menu-two" class="text-white text-2xl">
+                    <i class="fa fa-info-circle"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- 移动端菜单1：作品导航 -->
+        <div id="mobile-menu" class="hidden md:hidden nav-menu">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="#minecraft-mods" class="text-white hover:text-accent transition-colors py-2">我的世界Mod</a>
+                <a href="#utilities" class="text-white hover:text-accent transition-colors py-2">实用工具</a>
+                <a href="#indie-games" class="text-white hover:text-accent transition-colors py-2">独立游戏</a>
+                <a href="#about" class="text-white hover:text-accent transition-colors py-2">关于我</a>
+            </div>
+        </div>
+        <!-- 移动端菜单2：关于页面 -->
+        <div id="mobile-menutwo" class="hidden md:hidden nav-menu">
+            <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
+                <a href="./privacy-policy.html" class="text-white hover:text-accent transition-colors py-2">隐私政策</a>
+                <a href="./contact.html" class="text-white hover:text-accent transition-colors py-2">联系作者</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 首页横幅 -->
+    <section class="hero-gradient pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
+        <!-- 漂浮装饰方块 -->
+        <div class="hero-square square-1"></div>
+        <div class="hero-square square-2"></div>
+        <div class="hero-square square-3"></div>
+        <div class="hero-square square-4"></div>
+        <div class="hero-square square-5"></div>
+
+        <div class="container mx-auto px-4 relative z-10">
+            <div class="max-w-3xl mx-auto text-center">
+                <h1 class="text-[clamp(3rem,2vw,4rem)] text-white mb-5 max-w-2xl mx-auto font-bold">果敢的狂电猴</h1>
+                <p class="text-[clamp(1rem,2vw,2rem)] text-white mb-12 max-w-2xl mx-auto font-bold">孤身一人时 会在我们热爱的世界中 找到那个与你志同道合的人</p>
+                <div class="flex flex-col sm:flex-row justify-center gap-4">
+                    <a href="#minecraft-mods" class="bg-primary hover:bg-primary/90 text-white font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105 flex items-center justify-center">
+                        <i class="fa fa-download mr-2"></i>浏览作品
+                    </a>
+                    <a href="https://space.bilibili.com/3546703787461385?spm_id_from=333.1007.0.0" class="bg-transparent border-2 border-white hover:border-accent text-white hover:text-accent font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105">
+                        B站关注我
+                    </a>
+                    <a href="https://github.com/BoldElectricMonkey/Monkey-s-github" class="bg-transparent border-2 border-white hover:border-accent text-white hover:text-accent font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105">
+                        网站源代码
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部波浪分割 -->
+        <div class="absolute bottom-0 left-0 w-full pointer-events-none">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100">
+                <path fill="#121212" fill-opacity="1" d="M0,64L80,69.3C160,75,320,85,480,80C640,75,800,53,960,48C1120,43,1280,53,1360,58.7L1440,64L1440,100L1360,100C1280,100,1120,100,960,100C800,100,640,100,480,100C320,100,160,100,80,100L0,100Z"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- MC Mod板块 -->
+    <section id="minecraft-mods" class="py-16 md:py-24 bg-dark">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <div class="inline-block p-3 bg-primary/10 rounded-full mb-4">
+                    <i class="fa fa-cube text-3xl text-primary"></i>
+                </div>
+                <h2 class="text-white text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">《我的世界》Mod</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto text-lg">精心制作各类MC模组，为生存、创造增添全新乐趣与挑战</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 矿点Mod -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/微信图片_20250804182640.jpg" alt="矿点Mod" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">矿点Mod</h3>
+                        <p class="text-gray-400 mb-4">物品融合拓展模组，新增大量装备、道具，通过挖矿、合成打造强力装备，大幅提升探索成就感。</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
+                            <a href="./src/files/kuangdianmod-2.0.1-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 饱了吗 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/微信图片_20250802152709.jpg" alt="饱了吗Mod" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">饱了吗</h3>
+                        <p class="text-gray-400 mb-4">现实零食、饮料拓展模组，冰红茶、坚果等食物加入游戏，丰富生存饮食系统。</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
+                            <a href="./src/files/full-1.0.1-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 可发射火焰弹 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/微信图片_20250812150115.jpg" alt="可发射火焰弹Mod" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">可发射的火焰弹</h3>
+                        <p class="text-gray-400 mb-4">右键直接发射火焰弹，还原服务器烈焰弹玩法，远程输出工具。</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
+                            <a href="./src/files/launchable_fire_charge-1.0.1-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 附魔金苹果合成 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/ce.png" alt="附魔金苹果合成Mod" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">附魔金苹果的合成配方</h3>
+                        <p class="text-gray-400 mb-4">恢复早期版本特性，附魔金苹果可手动合成，不再只能宝箱获取。</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
+                            <a href="./src/files/craftable_enchanted_golden_apple-1.0.0-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 跳跃生成熔岩 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/给图添加标题.png" alt="实体跳跃熔岩Mod" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">实体跳跃但生成熔岩</h3>
+                        <p class="text-gray-400 mb-4">高难度挑战模组，所有生物跳跃生成岩浆，大幅提升生存难度；长期游玩可能卡顿崩溃，请谨慎使用。</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
+                            <a href="./src/files/entity_jump_but_generate_lava-1.0.0-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 半颗心生存 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/图片尺寸及标题修改.png" alt="半颗心生存Mod" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">半颗心生存</h3>
+                        <p class="text-gray-400 mb-4">极限生存模组，玩家永久仅半颗心血量，无法通过指令/其他模组修改生命值，禁用模组即可恢复。</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
+                            <a href="./src/files/minimum_hp-1.0.0-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 跳跃生成TNT -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover">
+                    <div class="h-48 overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/制作画面.png" alt="实体跳跃TNTMod" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="p-6">
+                        <h3 class="text-xl font-bold mb-2 text-white">实体跳跃但生成TNT</h3>
+                        <p class="text-gray-400 mb-4">硬核挑战模组，生物跳跃生成TNT，生存压力拉满；长时间运行易卡顿、崩溃，谨慎下载。</p>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-primary/10 text-primary px-3 py-1 rounded-full">1.21.4-NeoForge</span>
+                            <a href="./src/files/entity_jumps_but_spawns_tnt-1.0.0-neoforge-1.21.4.jar" class="download-btn bg-primary text-white px-4 py-2 rounded-lg flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 订阅横幅 -->
+    <section class="py-16 bg-gradient-to-r from-primary to-secondary text-white">
+        <div class="container mx-auto px-4 text-center">
+            <p class="text-[clamp(1.2rem,3vw,1.8rem)] font-bold mb-6">持续更新，带来更多模组、工具与独立游戏</p>
+            <a href="https://space.bilibili.com/3546703787461385?spm_id_from=333.1007.0.0" class="inline-block bg-accent hover:bg-accent/90 text-dark font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105">
+                <i class="fa fa-bell mr-2"></i>订阅更新通知
+            </a>
+        </div>
+    </section>
+
+    <!-- 实用工具板块 -->
+    <section id="utilities" class="py-16 md:py-24 bg-dark">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <div class="inline-block p-3 bg-secondary/10 rounded-full mb-4">
+                    <i class="fa fa-wrench text-3xl text-secondary"></i>
+                </div>
+                <h2 class="text-white text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">实用工具</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto text-lg">办公、学习、游戏辅助工具，提升日常效率</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- PVZ-Download -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover flex flex-col md:flex-row">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/设计 PVZ-Download 图标.png" alt="PVZ下载器" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="md:w-2/3 p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2 text-white">PVZ-Download</h3>
+                            <p class="text-gray-400">植物大战僵尸多版本一键下载器，内置各版本资源与作者说明。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V2.6</span>
+                            <a href="./src/files/PVZ-Download V2.6.exe" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Work-Out -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover flex flex-col md:flex-row">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/设计‘Work-Out’封面.png" alt="WorkOut计算工具" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="md:w-2/3 p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2 text-white">Work-Out</h3>
+                            <p class="text-gray-400">多功能计算器，适配学习、工作各类数值计算需求。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.3</span>
+                            <a href="./src/files/Work-Out V1.3.exe" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 狂电抽号器 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover flex flex-col md:flex-row">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/制作抽号器封面.png" alt="抽号器" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="md:w-2/3 p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2 text-white">狂电抽号器</h3>
+                            <p class="text-gray-400">课堂、活动随机抽号工具，简单高效。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.0</span>
+                            <a href="./src/files/狂电抽号器 V1.0.exe" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center" download>
+                                <i class="fa fa-download mr-2"></i>下载
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 新花果山网页 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover flex flex-col md:flex-row">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/FUlogo.png" alt="花果山导航" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="md:w-2/3 p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2 text-white">[新]花果山网页</h3>
+                            <p class="text-gray-400">自定义网址导航页，极简界面，纪念旧版花果山。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.2</span>
+                            <a href="pages/NewFlowerU.html" target="_blank" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center">
+                                <i class="fa fa-external-link mr-2"></i>前往
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- Menmo系统 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover flex flex-col md:flex-row">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/#.png" alt="Menmo系统" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="md:w-2/3 p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2 text-white">Menmo</h3>
+                            <p class="text-gray-400">自制网页系统测试版本。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">β2u6</span>
+                            <a href="pages/Menmo.html" target="_blank" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center">
+                                <i class="fa fa-external-link mr-2"></i>前往
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 花果山矿区 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover flex flex-col md:flex-row">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/MP4logo.png" alt="FLMP4" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="md:w-2/3 p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2 text-white">花果山矿区</h3>
+                            <p class="text-gray-400">独立思考，明辨是非，认清现实。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.0</span>
+                            <a href="pages/FLMP4.html" target="_blank" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center">
+                                <i class="fa fa-external-link mr-2"></i>前往
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- IDCheck -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover flex flex-col md:flex-row">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/IDlogo.png" alt="身份证校验工具" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="md:w-2/3 p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2 text-white">IDCheck</h3>
+                            <p class="text-gray-400">身份证校验码在线计算工具，验证号码合法性。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.0.2</span>
+                            <a href="pages/IDCheckLogin.html" target="_blank" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center">
+                                <i class="fa fa-external-link mr-2"></i>前往
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 金丝HTML编辑器 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover flex flex-col md:flex-row">
+                    <div class="md:w-1/3 h-48 md:h-auto overflow-hidden">
+                        <img loading="lazy" src="./src/assets/images/GSlogo.png" alt="金丝编辑器" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                    </div>
+                    <div class="md:w-2/3 p-6 flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-bold mb-2 text-white">金丝 - HTML编辑器</h3>
+                            <p class="text-gray-400">在线网页代码编辑器，实时预览，快速调试页面。</p>
+                        </div>
+                        <div class="flex justify-between items-center mt-4">
+                            <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.0</span>
+                            <a href="pages/GoldSilk.html" target="_blank" class="download-btn bg-secondary text-white px-4 py-2 rounded-lg flex items-center">
+                                <i class="fa fa-external-link mr-2"></i>前往
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 独立游戏板块 -->
+    <section id="indie-games" class="py-16 md:py-24 bg-gradient-to-b from-dark to-gray-900">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <div class="inline-block p-3 bg-accent/10 rounded-full mb-4">
+                    <i class="fa fa-gamepad text-3xl text-accent"></i>
+                </div>
+                <h2 class="text-white text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">独立游戏</h2>
+                <p class="text-gray-400 max-w-2xl mx-auto text-lg">自制独立小游戏，休闲冒险玩法</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto space-y-8">
+                <!-- Scratch的冒险 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-xl card-hover">
+                    <div class="md:flex">
+                        <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
+                            <img loading="lazy" src="./src/assets/images/Screenshot 2025-08-19 074609.png" alt="Scratch的冒险" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                        </div>
+                        <div class="md:w-1/2 p-8">
+                            <span class="inline-block text-sm bg-accent/10 text-accent px-3 py-1 rounded-full mb-4">小游戏合集</span>
+                            <h3 class="text-2xl font-bold mb-4 text-white">Scratch的冒险</h3>
+                            <p class="text-gray-400 mb-6">可爱画风冒险游戏，操控小生物探索奇幻地图，解谜、击败怪物。</p>
+                            <div class="flex flex-wrap gap-4 mb-6">
+                                <div class="flex items-center text-gray-400">
+                                    <i class="fa fa-clock-o mr-2 text-gray-500"></i>游戏时长：10-20分钟
+                                </div>
+                                <div class="flex items-center text-gray-400">
+                                    <i class="fa fa-star text-yellow-400 mr-2"></i>难度：适中
+                                </div>
+                            </div>
+                            <a href="https://pan.quark.cn/s/9dc68ebc408c?pwd=gHy2" target="_blank" class="inline-block bg-accent hover:bg-accent/90 text-dark font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105">
+                                <i class="fa fa-download mr-2"></i>下载游戏
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 保护海洋 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-xl card-hover">
+                    <div class="md:flex">
+                        <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
+                            <img loading="lazy" src="./src/assets/images/Screenshot 2025-08-28 151856.png" alt="保护海洋" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                        </div>
+                        <div class="md:w-1/2 p-8">
+                            <span class="inline-block text-sm bg-accent/10 text-accent px-3 py-1 rounded-full mb-4">小游戏合集</span>
+                            <h3 class="text-2xl font-bold mb-4 text-white">保护海洋-你我做起</h3>
+                            <p class="text-gray-400 mb-6">早期参赛作品，环保主题小游戏，初代开发练手项目。</p>
+                            <div class="flex flex-wrap gap-4 mb-6">
+                                <div class="flex items-center text-gray-400">
+                                    <i class="fa fa-clock-o mr-2 text-gray-500"></i>游戏时长：5-10分钟
+                                </div>
+                                <div class="flex items-center text-gray-400">
+                                    <i class="fa fa-star text-yellow-400 mr-2"></i>难度：简单
+                                </div>
+                            </div>
+                            <a href="https://pan.quark.cn/s/34f420740423?pwd=W4uY" target="_blank" class="inline-block bg-accent hover:bg-accent/90 text-dark font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105">
+                                <i class="fa fa-download mr-2"></i>下载游戏
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 关于我 -->
+    <section id="about" class="py-16 md:py-24 bg-gray-900 text-white">
+        <div class="container mx-auto px-4">
+            <div class="max-w-5xl mx-auto">
+                <div class="text-center mb-16">
+                    <div class="inline-block p-3 bg-primary/20 rounded-full mb-4">
+                        <i class="fa fa-user text-3xl text-primary"></i>
+                    </div>
+                    <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">关于我</h2>
+                    <p class="text-gray-400 max-w-2xl mx-auto text-lg">果敢的狂电猴 | 游戏爱好者、独立开发者</p>
+                </div>
+
+                <div class="bg-gray-800 bg-opacity-50 rounded-2xl p-8 md:p-12 shadow-xl backdrop-blur-sm border border-gray-800">
+                    <div class="flex flex-col md:flex-row items-center gap-10">
+                        <div class="w-36 h-36 rounded-full overflow-hidden border-4 border-primary flex-shrink-0">
+                            <img loading="lazy" src="./src/assets/images/红包的文化与历史介绍.png" alt="作者头像" class="w-full h-full object-cover">
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="text-2xl font-bold mb-4">果敢的狂电猴</h3>
+                            <p class="text-gray-400 mb-6">
+                                2011年出生，重度《我的世界》爱好者，独立创作者。长期开发MC模组、桌面工具、网页应用与小型独立游戏，所有作品免费分享给玩家社区。
+                                坚信游戏的内核是创造与分享，持续产出各类趣味内容。
+                            </p>
+                            <div class="flex space-x-4">
+                                <a href="https://github.com/BoldElectricMonkey" class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/40 transition-colors">
+                                    <i class="fa fa-github text-white"></i>
+                                </a>
+                                <a href="https://space.bilibili.com/3546703787461385" target="_blank" class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center hover:bg-primary/40 transition-colors">
+                                    <i class="fa fa-play-circle text-white"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 返回顶部按钮 -->
+    <button id="back-to-top" class="fixed bottom-8 right-8 bg-primary text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-50">
+        <i class="fa fa-chevron-up text-xl"></i>
+    </button>
+
+    <!-- 全部JS内嵌在页面，不再外部引入 -->
+    <script>
+        // 全局DOM缓存，减少重复查询
+        const dom = {
+            navbar: document.getElementById('navbar'),
+            backTop: document.getElementById('back-to-top'),
+            navToggle: document.querySelector('.nav-toggle'),
+            aboutToggle: document.querySelector('.about-toggle'),
+            desktopMenu: document.querySelector('.dropdown-panel'),
+            aboutMenu: document.querySelector('.about-panel'),
+            mobileMenuBtn: document.getElementById('menu-toggle'),
+            mobileAboutBtn: document.getElementById('menu-two'),
+            mobileMenu: document.getElementById('mobile-menu'),
+            mobileAboutMenu: document.getElementById('mobile-menutwo')
+        }
+
+        // 防抖函数，优化滚动性能
+        function debounce(fn, delay = 50) {
+            let timer = null;
+            return function(...args) {
+                clearTimeout(timer);
+                timer = setTimeout(() => fn.apply(this, args), delay);
+            }
+        }
+
+        // 滚动导航、返回顶部控制
+        const scrollHandler = debounce(() => {
+            // 导航栏高度切换
+            if (window.scrollY > 50) {
+                dom.navbar.classList.add('py-1', 'scrolled');
+            } else {
+                dom.navbar.classList.remove('py-1', 'scrolled');
+            }
+            // 返回顶部按钮显隐
+            if (window.scrollY > 0) {
+                dom.backTop.classList.add('show');
+            } else {
+                dom.backTop.classList.remove('show');
+            }
+        })
+        window.addEventListener('scroll', scrollHandler);
+
+        // 桌面下拉菜单互斥开关
+        dom.navToggle.addEventListener('click', () => {
+            dom.desktopMenu.classList.toggle('hidden');
+            dom.aboutMenu.classList.add('hidden');
+        })
+        dom.aboutToggle.addEventListener('click', () => {
+            dom.aboutMenu.classList.toggle('hidden');
+            dom.desktopMenu.classList.add('hidden');
+        })
+
+        // 移动端菜单切换
+        dom.mobileMenuBtn.addEventListener('click', () => {
+            dom.mobileMenu.classList.toggle('hidden');
+            dom.mobileAboutMenu.classList.add('hidden');
+        })
+        dom.mobileAboutBtn.addEventListener('click', () => {
+            dom.mobileAboutMenu.classList.toggle('hidden');
+            dom.mobileMenu.classList.add('hidden');
+        })
+
+        // 点击页面空白关闭所有下拉菜单
+        document.addEventListener('click', (e) => {
+            const isNavClick = dom.navToggle.contains(e.target) || dom.desktopMenu.contains(e.target);
+            const isAboutClick = dom.aboutToggle.contains(e.target) || dom.aboutMenu.contains(e.target);
+            if (!isNavClick) dom.desktopMenu.classList.add('hidden');
+            if (!isAboutClick) dom.aboutMenu.classList.add('hidden');
+        })
+
+        // 返回顶部平滑滚动
+        dom.backTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+        })
+
+        // ========== 后端预留接口区域（可对接Express后端）==========
+        // async function loadWorksData() {
+        //   const res = await fetch("http://localhost:3000/api/works");
+        //   const data = await res.json();
+        //   // 动态渲染卡片
+        // }
+        // loadWorksData();
+    </script>
+</body>
+</html>
