@@ -6,7 +6,7 @@
     <!-- SEO优化 -->
     <meta name="description" content="果敢的狂电猴个人主页，我的世界Mod、实用工具、独立游戏免费下载分享站">
     <meta name="keywords" content="我的世界Mod,MC模组,实用工具,独立游戏,Scratch游戏">
-    <title>果敢的狂电猴 - 主页 - 3.0.1</title>
+    <title>果敢的狂电猴 - 主页 - 3.0</title>
     <link rel="icon" href="./src/assets/images/果敢的狂电猴头.png" type="image/png">
     <!-- 外部CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -52,11 +52,6 @@
             .card-hover { transition: all 0.3s ease; }
             .card-hover:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.2), 0 10px 10px -5px rgba(0,0,0,0.1); }
             .blur-nav { backdrop-filter: blur(8px); }
-    /* 新增：滚动后导航栏背景样式 */
-            .nav-scrolled {
-                background-color: rgba(26, 0, 75, 0.85) !important;
-                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            }
         }
     </style>
 
@@ -572,144 +567,86 @@
 
     <!-- 全部JS内嵌在页面，不再外部引入 -->
     <script>
-        // 全局DOM缓存
-const dom = {
-    navbar: document.getElementById('navbar'),
-    backTop: document.getElementById('back-to-top'),
-    navToggle: document.querySelector('.nav-toggle'),
-    desktopMenu: document.querySelector('.dropdown-panel'),
-    aboutToggle: document.querySelector('.about-toggle'),
-    aboutMenu: document.querySelector('.about-panel'),
-    mobileMenuBtn: document.getElementById('menu-toggle'),
-    mobileMenu: document.getElementById('mobile-menu'),
-    mobileAboutBtn: document.getElementById('menu-two'),
-    mobileAboutMenu: document.getElementById('mobile-menutwo'),
-}
-const menuList = [dom.desktopMenu, dom.aboutMenu, dom.mobileMenu, dom.mobileAboutMenu];
+        // 全局DOM缓存，减少重复查询
+        const dom = {
+            navbar: document.getElementById('navbar'),
+            backTop: document.getElementById('back-to-top'),
+            navToggle: document.querySelector('.nav-toggle'),
+            aboutToggle: document.querySelector('.about-toggle'),
+            desktopMenu: document.querySelector('.dropdown-panel'),
+            aboutMenu: document.querySelector('.about-panel'),
+            mobileMenuBtn: document.getElementById('menu-toggle'),
+            mobileAboutBtn: document.getElementById('menu-two'),
+            mobileMenu: document.getElementById('mobile-menu'),
+            mobileAboutMenu: document.getElementById('mobile-menutwo')
+        }
 
-// 初始化所有下拉菜单：初始透明、无背景、上移
-function initMenuStyle() {
-    menuList.forEach(menu => {
-        Object.assign(menu.style, {
-            opacity: '0',
-            visibility: 'hidden',
-            backgroundColor: 'transparent',
-            transform: 'translateY(-8px)',
-            transition: 'opacity 0.3s ease, visibility 0.3s ease, background-color 0.3s ease, transform 0.3s ease',
-            pointerEvents: 'none'
+        // 防抖函数，优化滚动性能
+        function debounce(fn, delay = 50) {
+            let timer = null;
+            return function(...args) {
+                clearTimeout(timer);
+                timer = setTimeout(() => fn.apply(this, args), delay);
+            }
+        }
+
+        // 滚动导航、返回顶部控制
+        const scrollHandler = debounce(() => {
+            // 导航栏高度切换
+            if (window.scrollY > 50) {
+                dom.navbar.classList.add('py-1', 'scrolled');
+            } else {
+                dom.navbar.classList.remove('py-1', 'scrolled');
+            }
+            // 返回顶部按钮显隐
+            if (window.scrollY > 0) {
+                dom.backTop.classList.add('show');
+            } else {
+                dom.backTop.classList.remove('show');
+            }
         })
-    })
-}
-// 打开菜单：渐变显示 + 填充深色背景
-function openMenu(menu) {
-    Object.assign(menu.style, {
-        opacity: '1',
-        visibility: 'visible',
-        backgroundColor: '#1A004B',
-        transform: 'translateY(0)',
-        pointerEvents: 'auto'
-    })
-    menu.classList.remove('hidden');
-}
-// 关闭菜单：透明、无背景、上移消失
-function closeMenu(menu) {
-    Object.assign(menu.style, {
-        opacity: '0',
-        visibility: 'hidden',
-        backgroundColor: 'transparent',
-        transform: 'translateY(-8px)',
-        pointerEvents: 'none'
-    })
-    menu.classList.add('hidden');
-}
-// 防抖函数，优化滚动性能
-function debounce(fn, delay = 50) {
-    let timer = null;
-    return function(...args) {
-        clearTimeout(timer);
-        timer = setTimeout(() => fn.apply(this, args), delay);
-    }
-}
-// 滚动导航、返回顶部、导航栏透明切换控制
-const scrollHandler = debounce(() => {
-    const scrollY = window.scrollY;
-    // 导航栏高度切换 + 背景渐变（核心需求）
-    if (scrollY > 0) {
-        dom.navbar.classList.add('py-1', 'nav-scrolled');
-    } else {
-        dom.navbar.classList.remove('py-1', 'nav-scrolled');
-    }
-    // 返回顶部按钮显隐
-    if (scrollY > 0) {
-        dom.backTop.classList.add('show');
-    } else {
-        dom.backTop.classList.remove('show');
-    }
-})
-window.addEventListener('scroll', scrollHandler);
-// 页面加载完成初始化菜单样式
-window.addEventListener('DOMContentLoaded', initMenuStyle);
-// 桌面下拉菜单互斥开关
-dom.navToggle.addEventListener('click', () => {
-    // 关闭另一个菜单
-    closeMenu(dom.aboutMenu);
-    if (dom.desktopMenu.classList.contains('hidden')) {
-        openMenu(dom.desktopMenu);
-    } else {
-        closeMenu(dom.desktopMenu);
-    }
-})
-dom.aboutToggle.addEventListener('click', () => {
-    closeMenu(dom.desktopMenu);
-    if (dom.aboutMenu.classList.contains('hidden')) {
-        openMenu(dom.aboutMenu);
-    } else {
-        closeMenu(dom.aboutMenu);
-    }
-})
-// 移动端菜单切换
-dom.mobileMenuBtn.addEventListener('click', () => {
-    closeMenu(dom.mobileAboutMenu);
-    if (dom.mobileMenu.classList.contains('hidden')) {
-        openMenu(dom.mobileMenu);
-    } else {
-        closeMenu(dom.mobileMenu);
-    }
-})
-dom.mobileAboutBtn.addEventListener('click', () => {
-    closeMenu(dom.mobileMenu);
-    if (dom.mobileAboutMenu.classList.contains('hidden')) {
-        openMenu(dom.mobileAboutMenu);
-    } else {
-        closeMenu(dom.mobileAboutMenu);
-    }
-})
-// 点击页面空白关闭所有下拉菜单
-document.addEventListener('click', (e) => {
-    const isNavClick = dom.navToggle.contains(e.target) || dom.desktopMenu.contains(e.target);
-    const isAboutClick = dom.aboutToggle.contains(e.target) || dom.aboutMenu.contains(e.target);
-    const isMobileNavBtn = dom.mobileMenuBtn.contains(e.target);
-    const isMobileAboutBtn = dom.mobileAboutBtn.contains(e.target);
-    const isMobileMenu = dom.mobileMenu.contains(e.target) || dom.mobileAboutMenu.contains(e.target);
-    // 点击不在菜单/按钮内，则全部关闭
-    if (!isNavClick && !isAboutClick && !isMobileNavBtn && !isMobileAboutBtn && !isMobileMenu) {
-        closeMenu(dom.desktopMenu);
-        closeMenu(dom.aboutMenu);
-        closeMenu(dom.mobileMenu);
-        closeMenu(dom.mobileAboutMenu);
-    }
-})
-// 返回顶部平滑滚动
-dom.backTop.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' })
-})
-// ========== 后端预留接口区域（可对接Express后端）==========
-// async function loadWorksData() {
-//   const res = await fetch("http://localhost:3000/api/works");
-//   const data = await res.json();
-//   // 动态渲染卡片
-// }
-// loadWorksData();
+        window.addEventListener('scroll', scrollHandler);
+
+        // 桌面下拉菜单互斥开关
+        dom.navToggle.addEventListener('click', () => {
+            dom.desktopMenu.classList.toggle('hidden');
+            dom.aboutMenu.classList.add('hidden');
+        })
+        dom.aboutToggle.addEventListener('click', () => {
+            dom.aboutMenu.classList.toggle('hidden');
+            dom.desktopMenu.classList.add('hidden');
+        })
+
+        // 移动端菜单切换
+        dom.mobileMenuBtn.addEventListener('click', () => {
+            dom.mobileMenu.classList.toggle('hidden');
+            dom.mobileAboutMenu.classList.add('hidden');
+        })
+        dom.mobileAboutBtn.addEventListener('click', () => {
+            dom.mobileAboutMenu.classList.toggle('hidden');
+            dom.mobileMenu.classList.add('hidden');
+        })
+
+        // 点击页面空白关闭所有下拉菜单
+        document.addEventListener('click', (e) => {
+            const isNavClick = dom.navToggle.contains(e.target) || dom.desktopMenu.contains(e.target);
+            const isAboutClick = dom.aboutToggle.contains(e.target) || dom.aboutMenu.contains(e.target);
+            if (!isNavClick) dom.desktopMenu.classList.add('hidden');
+            if (!isAboutClick) dom.aboutMenu.classList.add('hidden');
+        })
+
+        // 返回顶部平滑滚动
+        dom.backTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' })
+        })
+
+        // ========== 后端预留接口区域（可对接Express后端）==========
+        // async function loadWorksData() {
+        //   const res = await fetch("http://localhost:3000/api/works");
+        //   const data = await res.json();
+        //   // 动态渲染卡片
+        // }
+        // loadWorksData();
     </script>
 </body>
 </html>
