@@ -6,7 +6,7 @@
     <!-- SEO优化 -->
     <meta name="description" content="果敢的狂电猴个人主页，我的世界Mod、实用工具、独立游戏免费下载分享站">
     <meta name="keywords" content="我的世界Mod,MC模组,实用工具,独立游戏,Scratch游戏">
-    <title>果敢的狂电猴 - 主页 - 3.0.4</title>
+    <title>果敢的狂电猴 - 主页 - 3.0.5</title>
     <link rel="icon" href="./src/assets/images/果敢的狂电猴头.png" type="image/png">
     <!-- 外部CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,7 +14,6 @@
     <!-- 预加载字体 -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
     <!-- Tailwind全局配置（仅配置，无样式） -->
     <script>
         tailwind.config = {
@@ -43,7 +42,6 @@
             }
         }
     </script>
-
     <!-- Tailwind自定义工具（无法抽离外部css） -->
     <style type="text/tailwindcss">
         @layer utilities {
@@ -54,7 +52,6 @@
             .blur-nav { backdrop-filter: blur(8px); }
         }
     </style>
-
     <!-- 外部独立样式 -->
     <link rel="stylesheet" href="./src/css/main.css">
 </head>
@@ -68,7 +65,6 @@
                     <img loading="lazy" src="./src/assets/images/果敢的狂电猴头.png" alt="头像" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
                 </div>
             </a>
-
             <!-- 桌面端导航 -->
             <nav class="hidden md:flex items-center space-x-4">
                 <!-- 作品导航下拉 -->
@@ -91,10 +87,11 @@
                     <div class="nav-menu about-panel hidden absolute top-full right-0 mt-2 w-48 rounded-lg shadow-xl py-2">
                         <a href="pages/privacy-policy.html" class="block px-4 py-2 text-white hover:text-accent transition-colors">隐私政策</a>
                         <a href="pages/contact.html" class="block px-4 py-2 text-white hover:text-accent transition-colors">联系作者</a>
+                        <!-- 更新日志按钮 -->
+                        <button id="open-changelog" class="w-full text-left block px-4 py-2 text-white hover:text-accent transition-colors">更新日志</button>
                     </div>
                 </div>
             </nav>
-
             <!-- 移动端按钮 -->
             <div class="md:hidden flex gap-3">
                 <button id="menu-toggle" class="text-white text-2xl">
@@ -105,7 +102,6 @@
                 </button>
             </div>
         </div>
-
         <!-- 移动端菜单1：作品导航 -->
         <div id="mobile-menu" class="hidden md:hidden nav-menu">
             <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
@@ -120,10 +116,11 @@
             <div class="container mx-auto px-4 py-4 flex flex-col space-y-4">
                 <a href="./privacy-policy.html" class="text-white hover:text-accent transition-colors py-2">隐私政策</a>
                 <a href="./contact.html" class="text-white hover:text-accent transition-colors py-2">联系作者</a>
+                <!-- 移动端更新日志按钮 -->
+                <button id="mobile-open-changelog" class="text-left text-white hover:text-accent transition-colors py-2">更新日志</button>
             </div>
         </div>
     </header>
-
     <!-- 首页横幅 -->
     <section class="hero-gradient pt-32 pb-20 md:pt-40 md:pb-32 relative overflow-hidden">
         <!-- 漂浮装饰方块 -->
@@ -132,7 +129,6 @@
         <div class="hero-square square-3"></div>
         <div class="hero-square square-4"></div>
         <div class="hero-square square-5"></div>
-
         <div class="container mx-auto px-4 relative z-10">
             <div class="max-w-3xl mx-auto text-center">
                 <h1 class="text-[clamp(3rem,2vw,4rem)] text-white mb-5 max-w-2xl mx-auto font-bold">果敢的狂电猴</h1>
@@ -150,7 +146,6 @@
                 </div>
             </div>
         </div>
-
         <!-- 底部波浪分割 -->
         <div class="absolute bottom-0 left-0 w-full pointer-events-none">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100">
@@ -158,7 +153,6 @@
             </svg>
         </div>
     </section>
-
     <!-- MC Mod板块 -->
     <section id="minecraft-mods" class="py-16 md:py-24 bg-dark">
         <div class="container mx-auto px-4">
@@ -169,7 +163,6 @@
                 <h2 class="text-white text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">《我的世界》Mod</h2>
                 <p class="text-gray-400 max-w-2xl mx-auto text-lg">精心制作各类MC模组，为生存、创造增添全新乐趣与挑战</p>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <!-- 矿点Mod -->
                 <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover">
@@ -286,7 +279,6 @@
             </div>
         </div>
     </section>
-
     <!-- 订阅横幅 -->
     <section class="py-16 bg-gradient-to-r from-primary to-secondary text-white">
         <div class="container mx-auto px-4 text-center">
@@ -296,7 +288,6 @@
             </a>
         </div>
     </section>
-
     <!-- 实用工具板块 -->
     <section id="utilities" class="py-16 md:py-24 bg-dark">
         <div class="container mx-auto px-4">
@@ -307,7 +298,6 @@
                 <h2 class="text-white text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">实用工具</h2>
                 <p class="text-gray-400 max-w-2xl mx-auto text-lg">办公、学习、游戏辅助工具，提升日常效率</p>
             </div>
-
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
                 <!-- PVZ-Download -->
                 <div class="mod-card rounded-xl overflow-hidden shadow-lg card-hover flex flex-col md:flex-row">
@@ -371,7 +361,7 @@
                     <div class="md:w-2/3 p-6 flex flex-col justify-between">
                         <div>
                             <h3 class="text-xl font-bold mb-2 text-white">[新]花果山网页</h3>
-                            <p class="text-gray-400">自定义网址导航页，极简界面，纪念旧版花果山。</p>
+                            <p class="text-gray-400">自定义网址导航页，极简界面，旧版花果山被封禁噜呜呜呜……</p>
                         </div>
                         <div class="flex justify-between items-center mt-4">
                             <span class="text-sm bg-secondary/10 text-secondary px-3 py-1 rounded-full">V1.2</span>
@@ -456,7 +446,6 @@
             </div>
         </div>
     </section>
-
     <!-- 独立游戏板块 -->
     <section id="indie-games" class="py-16 md:py-24 bg-gradient-to-b from-dark to-gray-900">
         <div class="container mx-auto px-4">
@@ -467,7 +456,6 @@
                 <h2 class="text-white text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">独立游戏</h2>
                 <p class="text-gray-400 max-w-2xl mx-auto text-lg">自制独立小游戏，休闲冒险玩法</p>
             </div>
-
             <div class="max-w-4xl mx-auto space-y-8">
                 <!-- Scratch的冒险 -->
                 <div class="mod-card rounded-xl overflow-hidden shadow-xl card-hover">
@@ -520,7 +508,6 @@
             </div>
         </div>
     </section>
-
     <!-- 关于我 -->
     <section id="about" class="py-16 md:py-24 bg-gray-900 text-white">
         <div class="container mx-auto px-4">
@@ -532,7 +519,6 @@
                     <h2 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold mb-4">关于我</h2>
                     <p class="text-gray-400 max-w-2xl mx-auto text-lg">果敢的狂电猴 | 游戏爱好者、独立开发者</p>
                 </div>
-
                 <div class="bg-gray-800 bg-opacity-50 rounded-2xl p-8 md:p-12 shadow-xl backdrop-blur-sm border border-gray-800">
                     <div class="flex flex-col md:flex-row items-center gap-10">
                         <div class="w-36 h-36 rounded-full overflow-hidden border-4 border-primary flex-shrink-0">
@@ -561,12 +547,26 @@
             </div>
         </div>
     </section>
-
+    <!-- 更新日志弹窗 -->
+    <div id="changelog-mask" class="fixed inset-0 bg-black/70 z-[9999] hidden flex items-center justify-center p-4">
+        <div id="changelog-box" class="relative w-full max-w-2xl bg-dark rounded-xl p-6 shadow-2xl border border-primary/40" onclick="event.stopPropagation()">
+            <button id="close-changelog" class="absolute top-4 right-4 text-gray-400 hover:text-accent text-2xl transition-colors" onclick="closeChangelog()">
+                <i class="fa fa-times"></i>
+            </button>
+            <h3 class="text-2xl font-bold text-white mb-4 border-b border-gray-700 pb-2">更新日志</h3>
+            <div class="text-gray-300 space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+                <p>【2026.07.30】版本3.0.5</p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li>新增“更新日志”功能。</li>
+                </ul>
+                <p class="text-secondary mt-4">持续更新中，敬请期待！</p>
+            </div>
+        </div>
+    </div>
     <!-- 返回顶部按钮 -->
     <button id="back-to-top" class="fixed bottom-8 right-8 bg-primary text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-50">
         <i class="fa fa-chevron-up text-xl"></i>
     </button>
-
     <!-- 全部JS内嵌在页面，不再外部引入 -->
     <script>
         // 全局DOM缓存，减少重复查询
@@ -582,7 +582,6 @@
             mobileMenu: document.getElementById('mobile-menu'),
             mobileAboutMenu: document.getElementById('mobile-menutwo')
         }
-
         // 防抖函数，优化滚动性能
         function debounce(fn, delay = 50) {
             let timer = null;
@@ -591,7 +590,6 @@
                 timer = setTimeout(() => fn.apply(this, args), delay);
             }
         }
-
         // 滚动导航、返回顶部控制
         const scrollHandler = debounce(() => {
             // 导航栏高度切换
@@ -608,7 +606,6 @@
             }
         })
         window.addEventListener('scroll', scrollHandler);
-
         // 桌面下拉菜单互斥开关
         dom.navToggle.addEventListener('click', () => {
             dom.desktopMenu.classList.toggle('hidden');
@@ -618,7 +615,6 @@
             dom.aboutMenu.classList.toggle('hidden');
             dom.desktopMenu.classList.add('hidden');
         })
-
         // 移动端菜单切换
         dom.mobileMenuBtn.addEventListener('click', () => {
             dom.mobileMenu.classList.toggle('hidden');
@@ -628,20 +624,55 @@
             dom.mobileAboutMenu.classList.toggle('hidden');
             dom.mobileMenu.classList.add('hidden');
         })
-
-        // 点击页面空白关闭所有下拉菜单
+        // 点击页面空白关闭所有下拉菜单（弹窗打开时跳过）
         document.addEventListener('click', (e) => {
+            const mask = document.getElementById('changelog-mask');
+            if (!mask.classList.contains('hidden')) return;
+
             const isNavClick = dom.navToggle.contains(e.target) || dom.desktopMenu.contains(e.target);
             const isAboutClick = dom.aboutToggle.contains(e.target) || dom.aboutMenu.contains(e.target);
             if (!isNavClick) dom.desktopMenu.classList.add('hidden');
             if (!isAboutClick) dom.aboutMenu.classList.add('hidden');
         })
-
         // 返回顶部平滑滚动
         dom.backTop.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' })
         })
-
+        // ========== 更新日志弹窗逻辑（修复版）==========
+        function openChangelog() {
+            const mask = document.getElementById('changelog-mask');
+            mask.classList.remove('hidden');
+            // 收起所有导航菜单
+            dom.desktopMenu.classList.add('hidden');
+            dom.aboutMenu.classList.add('hidden');
+            dom.mobileMenu.classList.add('hidden');
+            dom.mobileAboutMenu.classList.add('hidden');
+        }
+        function closeChangelog() {
+            const mask = document.getElementById('changelog-mask');
+            mask.classList.add('hidden');
+        }
+        // 桌面打开按钮
+        document.getElementById('open-changelog').addEventListener('click', function(e) {
+            e.stopPropagation();
+            openChangelog();
+        })
+        // 移动端打开按钮
+        document.getElementById('mobile-open-changelog').addEventListener('click', function(e) {
+            e.stopPropagation();
+            openChangelog();
+        })
+        // 点击遮罩空白关闭
+        document.getElementById('changelog-mask').addEventListener('click', function(e) {
+            if (e.target === this) closeChangelog();
+        })
+        // ESC快捷键关闭
+        document.addEventListener('keydown', function(e) {
+            const mask = document.getElementById('changelog-mask');
+            if (e.key === 'Escape' && !mask.classList.contains('hidden')) {
+                closeChangelog();
+            }
+        })
         // ========== 后端预留接口区域（可对接Express后端）==========
         // async function loadWorksData() {
         //   const res = await fetch("http://localhost:3000/api/works");
