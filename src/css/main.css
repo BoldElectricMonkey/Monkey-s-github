@@ -142,3 +142,33 @@ body {
 .nav-menu {
     background: linear-gradient(135deg, #120033 0%, #1A004B 100%);
 }
+/* 更新日志弹窗滚动条美化 */
+#changelog-box .overflow-y-auto::-webkit-scrollbar {
+    width: 6px;
+}
+#changelog-box .overflow-y-auto::-webkit-scrollbar-track {
+    background: #222;
+    border-radius: 3px;
+}
+#changelog-box .overflow-y-auto::-webkit-scrollbar-thumb {
+    background: #B026FF;
+    border-radius: 3px;
+}
+
+/* 更新日志版本区块上下间距，自动换行留白 */
+#changelog-box p {
+    margin-top: 3rem;
+    margin-bottom: 0.4rem;
+}
+#changelog-box ul {
+    margin-bottom: 0.25rem;
+}
+/* 第一条取消顶部多余间距 */
+#changelog-box .text-gray-300 > p:first-of-type {
+    margin-top: 0;
+}
+/* 基础禁止页面滚动 */
+body.changelog-open {
+    overflow: hidden !important;
+    touch-action: none !important; /* 移动端触摸滑动禁用 */
+}
