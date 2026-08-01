@@ -473,7 +473,7 @@
                                     <i class="fa fa-clock-o mr-2 text-gray-500"></i>制作起始时间：2024（具体我忘了）
                                 </div>
                                 <div class="flex items-center text-gray-400">
-                                    <i class="fa fa-star text-yellow-400 mr-2"></i>工具：Kitten图形化编程语言
+                                    <i class="fa fa-star text-yellow-400 mr-2"></i>技术栈：图形化编程
                                 </div>
                             </div>
                             <a href="https://pan.quark.cn/s/9dc68ebc408c?pwd=gHy2" target="_blank" class="inline-block bg-accent hover:bg-accent/90 text-dark font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105">
@@ -498,11 +498,36 @@
                                     <i class="fa fa-clock-o mr-2 text-gray-500"></i>制作起始时间：2023-2024（具体我忘了）
                                 </div>
                                 <div class="flex items-center text-gray-400">
-                                    <i class="fa fa-star text-yellow-400 mr-2"></i>工具：Kitten图形化编程语言
+                                    <i class="fa fa-star text-yellow-400 mr-2"></i>技术栈：图形化编程
                                 </div>
                             </div>
                             <a href="https://pan.quark.cn/s/34f420740423?pwd=W4uY" target="_blank" class="inline-block bg-accent hover:bg-accent/90 text-dark font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105">
                                 <i class="fa fa-download mr-2"></i>下载游戏
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- 电子魔方 -->
+                <div class="mod-card rounded-xl overflow-hidden shadow-xl card-hover">
+                    <div class="md:flex">
+                        <div class="md:w-1/2 h-64 md:h-auto overflow-hidden">
+                            <img loading="lazy" src="src\assets\images\icon.png" alt="Scratch的冒险" class="w-full h-full object-cover transition-transform duration-700 hover:scale-110">
+                        </div>
+                            <div class="md:w-1/2 p-8">
+                            <span class="inline-block text-sm bg-accent/10 text-accent px-3 py-1 rounded-full mb-4">二创</span>
+                            <span class="inline-block text-sm bg-accent/10 text-accent px-3 py-1 rounded-full mb-4">魔方</span>
+                            <h3 class="text-2xl font-bold mb-4 text-white">电子魔方</h3>
+                            <p class="text-gray-400 mb-6">从<a href="https://github.com/bsehovac/the-cube" target="_blank" class="underline hover:text-accent transition-colors">github</a>上获取开源资源制作的魔方网页游戏。</p>
+                            <div class="flex flex-wrap gap-4 mb-6">
+                                <div class="flex items-center text-gray-400">
+                                    <i class="fa fa-clock-o mr-2 text-gray-500"></i>制作起始时间：2026/8/1
+                                </div>
+                                <div class="flex items-center text-gray-400">
+                                    <i class="fa fa-star text-yellow-400 mr-2"></i>技术栈：HTML5+JavaScript（二创暂时只用到这些）
+                                </div>
+                            </div>
+                            <a href="pages\the-cube-FanCreation\index.html" target="_blank" class="inline-block bg-accent hover:bg-accent/90 text-dark font-bold py-3 px-8 rounded-full transition-all transform hover:scale-105">
+                                <i class="fa fa-download mr-2"></i>前往游戏
                             </a>
                         </div>
                     </div>
@@ -557,6 +582,11 @@
             </button>
             <h3 class="text-2xl font-bold text-white mb-4 border-b border-gray-700 pb-2">更新日志</h3>
             <div class="text-gray-300 space-y-3 max-h-[60vh] overflow-y-auto pr-2">
+                <p>【2026.08.01】版本3.2</p>
+                <ul class="list-disc pl-6 space-y-1">
+                    <li>修改和订正了一些内容。</li>
+                    <li>新增“自制游戏——电子魔方”项目</li>
+                </ul>
                 <p>【2026.08.01】版本3.1.2</p>
                 <ul class="list-disc pl-6 space-y-1">
                     <li>修改了一些严重的bug。</li>
@@ -597,6 +627,9 @@
             mobileMenu: document.getElementById('mobile-menu'),
             mobileAboutMenu: document.getElementById('mobile-menutwo')
         }
+        // 标记更新日志弹窗是否打开
+        let isChangelogOpen = false;
+
         // 防抖函数，优化滚动性能
         function debounce(fn, delay = 50) {
             let timer = null;
@@ -605,6 +638,7 @@
                 timer = setTimeout(() => fn.apply(this, args), delay);
             }
         }
+
         // 滚动导航、返回顶部控制
         const scrollHandler = debounce(() => {
             // 导航栏高度切换
@@ -621,6 +655,7 @@
             }
         })
         window.addEventListener('scroll', scrollHandler);
+
         // 桌面下拉菜单互斥开关
         dom.navToggle.addEventListener('click', () => {
             dom.desktopMenu.classList.toggle('hidden');
@@ -630,6 +665,7 @@
             dom.aboutMenu.classList.toggle('hidden');
             dom.desktopMenu.classList.add('hidden');
         })
+
         // 移动端菜单切换
         dom.mobileMenuBtn.addEventListener('click', () => {
             dom.mobileMenu.classList.toggle('hidden');
@@ -639,34 +675,42 @@
             dom.mobileAboutMenu.classList.toggle('hidden');
             dom.mobileMenu.classList.add('hidden');
         })
+
         // 点击页面空白关闭所有下拉菜单（弹窗打开时跳过）
         document.addEventListener('click', (e) => {
             const mask = document.getElementById('changelog-mask');
             if (!mask.classList.contains('hidden')) return;
-
             const isNavClick = dom.navToggle.contains(e.target) || dom.desktopMenu.contains(e.target);
             const isAboutClick = dom.aboutToggle.contains(e.target) || dom.aboutMenu.contains(e.target);
             if (!isNavClick) dom.desktopMenu.classList.add('hidden');
             if (!isAboutClick) dom.aboutMenu.classList.add('hidden');
         })
+
         // 返回顶部平滑滚动
         dom.backTop.addEventListener('click', () => {
             window.scrollTo({ top: 0, behavior: 'smooth' })
         })
-        // ========== 更新日志弹窗逻辑（修复版）==========
+
+        // ========== 更新日志弹窗逻辑 + 滚动锁定 ==========
         function openChangelog() {
             const mask = document.getElementById('changelog-mask');
             mask.classList.remove('hidden');
+            document.body.classList.add('changelog-open');
+            isChangelogOpen = true;
             // 收起所有导航菜单
             dom.desktopMenu.classList.add('hidden');
             dom.aboutMenu.classList.add('hidden');
             dom.mobileMenu.classList.add('hidden');
             dom.mobileAboutMenu.classList.add('hidden');
         }
+
         function closeChangelog() {
             const mask = document.getElementById('changelog-mask');
             mask.classList.add('hidden');
+            document.body.classList.remove('changelog-open');
+            isChangelogOpen = false;
         }
+
         // 桌面打开按钮
         document.getElementById('open-changelog').addEventListener('click', function(e) {
             e.stopPropagation();
@@ -688,13 +732,53 @@
                 closeChangelog();
             }
         })
-        // ========== 后端预留接口区域（可对接Express后端）==========
-        // async function loadWorksData() {
-        //   const res = await fetch("http://localhost:3000/api/works");
-        //   const data = await res.json();
-        //   // 动态渲染卡片
-        // }
-        // loadWorksData();
+
+        // 拦截鼠标滚轮、触控板滚动
+        window.addEventListener('wheel', function(e) {
+            if (!isChangelogOpen) return;
+            const box = document.getElementById('changelog-box');
+            if (!box.contains(e.target)) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+        }, { passive: false });
+
+        // 拦截键盘滚动按键：上下、PageUp/PageDown、Home/End、空格
+        window.addEventListener('keydown', function(e) {
+            if (!isChangelogOpen) return;
+            const blockKeys = [
+                'ArrowUp','ArrowDown','ArrowLeft','ArrowRight',
+                'PageUp','PageDown','Home','End',' '
+            ];
+            if (blockKeys.includes(e.key)) {
+                const box = document.getElementById('changelog-box');
+                if (!box.contains(e.target)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }
+        });
+
+        // 拦截鼠标中键长按拖拽滚动
+        document.addEventListener('mousedown', function(e) {
+            if (!isChangelogOpen) return;
+            // 中键 button=1
+            if (e.button === 1) {
+                const box = document.getElementById('changelog-box');
+                if (!box.contains(e.target)) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+            }
+        });
+
+// ========== 后端预留接口区域（可对接Express后端）==========
+// async function loadWorksData() {
+//   const res = await fetch("http://localhost:3000/api/works");
+//   const data = await res.json();
+//   // 动态渲染卡片
+// }
+// loadWorksData();
     </script>
 </body>
 </html>
