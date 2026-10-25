@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Menmo OS - β2u8</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230078d7'/%3E%3Ctext x='50' y='68' font-size='56' font-family='Segoe UI,sans-serif' fill='white' text-anchor='middle'%3EM%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="src/css/style.css">
+<script src="https://cdn.tailwindcss.com/"></script>
+<link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<script>
+tailwind.config = { theme: { extend: {
+  colors: {
+    osblue:'#0078d7', osblue2:'#0063b1', oswin:'#ffffff', oshdr:'#f0f0f0',
+    otask:'#2b2b2b', odark:'#1c1c1c', odarkhdr:'#2d2d2d', odarkbg:'#252525',
+    ogray:'#eaeaea', ograyd:'#888888', osstart:'#323232', oshover:'#484848',
+    accent:'#00b7a3'
+  },
+  boxShadow: { win:'0 8px 30px rgba(0,0,0,.32)', btn:'0 1px 3px rgba(0,0,0,.16)' },
+  borderRadius: { win:'6px', btn:'2px' }
+}}}
+</script>
+</head>
+
+<body class="h-screen w-screen overflow-hidden bg-cover bg-center" style="background-image:url('https://picsum.photos/id/1015/1920/1080'); background-size:cover;" id="desktopBody">
+
+<!-- ===== 开机动画 ===== -->
+<div id="bootScreen" class="fixed inset-0 z-[999] bg-[#0c0c0c] flex flex-col items-center justify-center fadein">
+  <div class="w-24 h-24 rounded-2xl flex items-center justify-center" style="background:linear-gradient(135deg,#0078d7,#00b7a3); box-shadow:0 0 40px rgba(0,120,215,.5);">
+    <i class="fa fa-windows text-5xl text-white"></i>
+  </div>
+  <div class="mt-8 text-white/80 text-sm">Menmo OS</div>
+  <div class="mt-4 w-56 h-1.5 bg-white/15 rounded-full overflow-hidden"><div id="bootBar" class="h-full" style="background:linear-gradient(90deg,#0078d7,#00b7a3);"></div></div>
+</div>
+
+<!-- ===== 锁屏 ===== -->
+<div id="lockScreen" class="fixed inset-0 z-[900] bg-cover bg-center flex flex-col justify-between" style="background-image:url('https://picsum.photos/id/1039/1920/1080'); background-color:#0f2a1f;">
+  <div class="absolute inset-0 bg-black/25"></div>
+  <div class="relative flex-1 flex flex-col items-center justify-center gap-2 cursor-pointer" onclick="unlock()">
+    <div class="text-5xl text-white textshadow">10:24</div>
+    <div class="text-white/90 textshadow" id="lockDate">—</div>
+    <div class="mt-6 text-white/70 textshadow text-sm">点击任意处解锁</div>
+  </div>
+  <div class="relative p-6 text-white/80 text-xs flex justify-between items-end">
+    <div class="space-y-1">
+      <div><i class="fa fa-wifi mr-2"></i><span>已连接</span></div>
+      <div><i class="fa fa-battery-full mr-2"></i><span>100%</span></div>
+    </div>
+    <div><i class="fa fa-user-circle text-2xl text-white/90"></i></div>
+  </div>
+</div>
+
+<!-- ===== 桌面 ===== -->
+<div id="desktop" class="absolute inset-0 z-0">
+  <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-7 gap-1 p-4" id="desktopIcons"></div>
+</div>
+
+<!-- ===== 右键菜单 ===== -->
+<div id="contextMenu" class="hidden fixed z-[600] w-48 bg-white/95 backdrop-blur rounded-md shadow-win py-1.5 text-sm" style="border:1px solid rgba(0,0,0,.08)"></div>
+
+<!-- ===== 任务栏 ===== -->
+<div id="taskbar" class="fixed bottom-0 left-0 right-0 h-12 z-[500] flex items-center px-2 border-t border-black/30 bg-[#202020]/95 backdrop-blur">
+  <button id="startBtn" class="w-11 h-11 flex items-center justify-center rounded hover:bg-white/12 os-btn"><i class="fa fa-windows text-white text-lg"></i></button>
+  <div class="h-8 w-px bg-white/15 mx-1"></div>
+  <div class="flex items-center gap-0.5 flex-1 overflow-hidden" id="taskbarApps"></div>
+  <div class="flex items-center gap-1 pr-1">
+    <div class="w-9 h-9 flex items-center justify-center rounded hover:bg-white/10 os-btn"><i class="fa fa-wifi text-white/85 text-sm"></i></div>
+    <div class="w-9 h-9 flex items-center justify-center rounded hover:bg-white/10 os-btn" id="volIcon"><i class="fa fa-volume-up text-white/85 text-sm"></i></div>
+    <div class="text-right text-white/90 text-xs leading-tight px-2 cursor-pointer hover:bg-white/10 rounded py-1 os-btn" onclick="openApp('clock')"><span class="block font-medium" id="taskTime">--:--</span><span class="block text-white/60" id="taskDate">----/--/--</span></div>
+  </div>
+</div>
+
+<!-- ===== 开始菜单 ===== -->
+<div id="startMenu" class="fixed bottom-14 left-2 z-[520] w-[560px] max-w-[92vw] h-[480px] max-h-[70vh] rounded-lg hidden popin overflow-hidden" style="background:rgba(32,32,32,.97); border:1px solid rgba(255,255,255,.08); box-shadow:0 20px 50px rgba(0,0,0,.5);">
+  <div class="flex h-full">
+    <div class="w-44 h-full bg-black/25 p-3 flex flex-col gap-1 text-white/90 text-sm shrink-0 overflow-auto scroll-w">
+      <div class="px-2 py-1 text-white/50 text-xs mb-1">固定</div>
+      <div class="start-item flex items-center gap-3 px-2 py-2 rounded hover:bg-white/10 cursor-pointer" data-app="mycomputer"><i class="fa fa-desktop text-lg text-sky-300"></i><span>我的电脑</span></div>
+      <div class="start-item flex items-center gap-3 px-2 py-2 rounded hover:bg-white/10 cursor-pointer" data-app="browser"><i class="fa fa-chrome text-lg text-emerald-300"></i><span>浏览器</span></div>
+      <div class="start-item flex items-center gap-3 px-2 py-2 rounded hover:bg-white/10 cursor-pointer" data-app="paint"><i class="fa fa-paint-brush text-lg text-rose-300"></i><span>画图</span></div>
+      <div class="px-2 py-1 text-white/50 text-xs mb-1 mt-2">应用</div>
+      <div class="start-item flex items-center gap-3 px-2 py-2 rounded hover:bg-white/10 cursor-pointer" data-app="calculator"><i class="fa fa-calculator text-lg text-amber-300"></i><span>计算器</span></div>
+      <div class="start-item flex items-center gap-3 px-2 py-2 rounded hover:bg-white/10 cursor-pointer" data-app="notepad"><i class="fa fa-file-text-o text-lg text-blue-300"></i><span>记事本</span></div>
+      <div class="start-item flex items-center gap-3 px-2 py-2 rounded hover:bg-white/10 cursor-pointer" data-app="clock"><i class="fa fa-clock-o text-lg text-violet-300"></i><span>时钟</span></div>
+      <div class="start-item flex items-center gap-3 px-2 py-2 rounded hover:bg-white/10 cursor-pointer" data-app="minesweeper"><i class="fa fa-bomb text-lg text-red-300"></i><span>扫雷</span></div>
+      <div class="start-item flex items-center gap-3 px-2 py-2 rounded hover:bg-white/10 cursor-pointer" data-app="recyclebin"><i class="fa fa-trash-o text-lg text-gray-300"></i><span>回收站</span></div>
+      <div class="start-item flex items-center gap-3 px-2 py-2 rounded hover:bg-white/10 cursor-pointer" data-app="settings"><i class="fa fa-cog text-lg text-gray-200"></i><span>设置</span></div>
+    </div>
+    <div class="flex-1 p-4 text-white flex flex-col">
+      <div class="text-lg font-semibold mb-4 flex items-center gap-2"><span class="w-7 h-7 rounded-full bg-gradient-to-br from-sky-400 to-violet-500 flex items-center justify-center text-white text-sm"><i class="fa fa-user"></i></span><span id="startUser">访客用户</span></div>
+      <div class="text-sm text-white/70 mb-2">最近添加</div>
+      <div class="grid grid-cols-4 gap-3 flex-1 content-start" id="startRecent"></div>
+      <div class="mt-3 flex gap-2">
+        <button class="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 rounded py-2 text-sm os-btn" onclick="appLock()"><i class="fa fa-lock"></i> 锁定</button>
+        <button class="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 rounded py-2 text-sm os-btn" onclick="appRestart()"><i class="fa fa-refresh"></i> 重启</button>
+        <button class="flex-1 flex items-center justify-center gap-2 bg-white/10 hover:bg-white/15 rounded py-2 text-sm os-btn" onclick="appShutdown()"><i class="fa fa-power-off"></i> 关机</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 窗口容器 ===== -->
+<div id="winLayer" class="absolute inset-0 z-10 pointer-events-none" style="bottom:48px;">
+  <div id="winTemplate" class="wnd hidden pointer-events-auto fixed rounded-win shadow-win overflow-hidden" style="width:860px;height:620px;left:80px;top:60px;background:#fff;border:1px solid rgba(0,0,0,.1);z-index:20;">
+    <div class="wnd-hdr win-drag h-10 flex items-center justify-between px-2 cursor-default" style="background:linear-gradient(180deg,#f7f7f7,#e9e9e9);">
+      <div class="flex items-center gap-2 min-w-0">
+        <i class="wnd-ico text-base text-osblue"></i>
+        <span class="wnd-title text-sm font-medium truncate text-gray-800"></span>
+      </div>
+      <div class="flex items-center gap-0.5 win-nodrag">
+        <button class="wnd-min w-9 h-9 flex items-center justify-center hover:bg-black/10 rounded-sm os-btn"><i class="fa fa-minus text-xs text-gray-700"></i></button>
+        <button class="wnd-max w-9 h-9 flex items-center justify-center hover:bg-black/10 rounded-sm os-btn"><i class="fa fa-square-o text-xs text-gray-700"></i></button>
+        <button class="wnd-close w-10 h-9 flex items-center justify-center hover:bg-red-500 hover:text-white rounded-sm os-btn"><i class="fa fa-times text-sm text-gray-700"></i></button>
+      </div>
+    </div>
+    <div class="wnd-body absolute inset-x-0 bottom-0 top-10 overflow-auto scroll-w bg-white"></div>
+    <!-- 窗口缩放手柄 -->
+    <div class="wnd-resize win-nodrag"></div>
+  </div>
+</div>
+
+<!-- ===== 应用内容模板 ===== -->
+<div id="appTpl" class="hidden">
+
+  <!-- 我的电脑 -->
+  <div id="tpl-mycomputer">
+    <div class="flex h-full flex-col">
+      <div class="flex items-center gap-1 p-2 border-b border-gray-200 bg-gray-50 shrink-0">
+        <button class="fm-nav os-btn w-9 h-8 flex items-center justify-center rounded hover:bg-gray-200 text-gray-600" data-act="back"><i class="fa fa-arrow-left"></i></button>
+        <button class="fm-nav os-btn w-9 h-8 flex items-center justify-center rounded hover:bg-gray-200 text-gray-600" data-act="fwd"><i class="fa fa-arrow-right"></i></button>
+        <button class="fm-nav os-btn w-9 h-8 flex items-center justify-center rounded hover:bg-gray-200 text-gray-600" data-act="up"><i class="fa fa-arrow-up"></i></button>
+        <button class="fm-nav os-btn w-9 h-8 flex items-center justify-center rounded hover:bg-gray-200 text-gray-600" data-act="refresh"><i class="fa fa-refresh"></i></button>
+        <input class="fm-path flex-1 mx-2 px-3 h-8 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-osblue/50 rounded-btn" readonly>
+        <button class="fm-new os-btn px-3 h-8 flex items-center gap-1.5 rounded hover:bg-gray-200 text-sm text-gray-700"><i class="fa fa-folder-open-o"></i> 新建</button>
+      </div>
+      <div class="flex flex-1 min-h-0">
+        <div class="w-40 shrink-0 border-r border-gray-200 bg-gray-50 p-2 space-y-0.5 overflow-auto scroll-w">
+          <div class="fm-side text-sm text-gray-700 hover:bg-gray-200 rounded px-2 py-1.5 cursor-pointer" data-path="root"><i class="fa fa-home w-5 text-osblue"></i> 快速访问</div>
+          <div class="fm-side text-sm text-gray-700 hover:bg-gray-200 rounded px-2 py-1.5 cursor-pointer" data-path="/desktop"><i class="fa fa-desktop w-5 text-sky-500"></i> 桌面</div>
+          <div class="fm-side text-sm text-gray-700 hover:bg-gray-200 rounded px-2 py-1.5 cursor-pointer" data-path="/documents"><i class="fa fa-file-text-o w-5 text-blue-500"></i> 文档</div>
+          <div class="fm-side text-sm text-gray-700 hover:bg-gray-200 rounded px-2 py-1.5 cursor-pointer" data-path="/pictures"><i class="fa fa-picture-o w-5 text-emerald-500"></i> 图片</div>
+          <div class="fm-side text-sm text-gray-700 hover:bg-gray-200 rounded px-2 py-1.5 cursor-pointer" data-path="/downloads"><i class="fa fa-download w-5 text-amber-500"></i> 下载</div>
+          <div class="fm-side text-sm text-gray-700 hover:bg-gray-200 rounded px-2 py-1.5 cursor-pointer" data-path="recycle"><i class="fa fa-trash-o w-5 text-gray-500"></i> 回收站</div>
+          <div class="h-px bg-gray-200 my-2"></div>
+          <div class="text-xs text-gray-500 px-2 py-1">本机</div>
+          <div class="fm-side text-sm text-gray-700 hover:bg-gray-200 rounded px-2 py-1.5 cursor-pointer" data-path="/c"><i class="fa fa-hdd-o w-5 text-sky-400"></i> 本地磁盘 (C:)</div>
+        </div>
+        <div class="flex-1 min-w-0 flex flex-col">
+          <div class="fm-crumb px-3 py-1.5 text-xs text-gray-500 border-b border-gray-100 flex items-center gap-1"></div>
+          <div class="fm-files flex-1 overflow-auto scroll-w p-3" id="fmFiles"></div>
+          <div class="px-3 py-1.5 text-xs text-gray-400 border-t border-gray-100 fm-status"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 浏览器 -->
+  <div id="tpl-browser">
+    <div class="flex h-full flex-col">
+      <div class="flex items-center gap-1.5 p-2 border-b border-gray-200 bg-gray-100 shrink-0">
+        <button class="b-back os-btn w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 text-gray-600"><i class="fa fa-arrow-left"></i></button>
+        <button class="b-fwd os-btn w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 text-gray-500"><i class="fa fa-arrow-right"></i></button>
+        <button class="b-reload os-btn w-8 h-8 flex items-center justify-center rounded hover:bg-gray-200 text-gray-600"><i class="fa fa-refresh"></i></button>
+        <input class="b-addr flex-1 px-3 h-8 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-osblue/50" placeholder="输入网址，回车访问">
+      </div>
+      <iframe class="b-frame flex-1 border-0 bg-white"></iframe>
+    </div>
+  </div>
+
+  <!-- 计算器 -->
+  <div id="tpl-calculator">
+    <div class="p-3">
+      <div class="bg-gray-100 border border-gray-200 rounded p-3 mb-3 text-right">
+        <div class="c-hist text-sm text-gray-500 min-h-[18px]">0</div>
+        <div class="c-display text-3xl font-light min-h-[44px] break-all">0</div>
+      </div>
+      <div class="grid grid-cols-4 gap-1.5">
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v="AC">AC</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v="sign">+/-</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v="%">%</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-amber-100 hover:bg-amber-200 text-base" data-v="/">÷</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v="7">7</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v="8">8</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v="9">9</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-amber-100 hover:bg-amber-200 text-base" data-v="*">×</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v="4">4</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v="5">5</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v="6">6</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-amber-100 hover:bg-amber-200 text-base" data-v="-">-</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v="1">1</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v="2">2</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v="3">3</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-amber-100 hover:bg-amber-200 text-base" data-v="+">+</button>
+        <button class="c-btn os-btn py-2.5 rounded col-span-2 bg-gray-200 hover:bg-gray-300 text-base" data-v="0">0</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-gray-200 hover:bg-gray-300 text-base" data-v=".">.</button>
+        <button class="c-btn os-btn py-2.5 rounded bg-amber-300 hover:bg-amber-400 text-base font-medium" data-v="=">=</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 记事本 -->
+  <div id="tpl-notepad">
+    <div class="flex h-full flex-col">
+      <div class="flex items-center gap-2 p-2 border-b border-gray-200 bg-gray-100 shrink-0">
+        <button class="np-save os-btn px-3 h-8 flex items-center gap-1.5 rounded text-sm text-white" style="background:#0078d7"><i class="fa fa-save"></i> 保存</button>
+        <button class="np-clear os-btn px-3 h-8 flex items-center gap-1.5 rounded text-sm bg-gray-200 hover:bg-gray-300"><i class="fa fa-trash"></i> 清空</button>
+        <span class="np-fname text-xs text-gray-500 ml-1 truncate"></span>
+      </div>
+      <textarea class="np-editor flex-1 p-3 text-sm resize-none focus:outline-none scroll-w" placeholder="在此输入文本..."></textarea>
+    </div>
+  </div>
+
+  <!-- 设置 -->
+  <div id="tpl-settings">
+    <div class="space-y-4 p-4">
+      <div class="border border-gray-200 rounded p-4">
+        <h3 class="font-semibold mb-3 text-gray-800">个性化</h3>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2 text-gray-700">桌面背景</label>
+          <div class="grid grid-cols-3 gap-3">
+            <button class="bg-btn h-20 bg-cover bg-center rounded border-2 border-transparent hover:border-osblue" data-bg="https://picsum.photos/id/1015/1920/1080" style="background-image:url('https://picsum.photos/id/1015/1920/1080')"></button>
+            <button class="bg-btn h-20 bg-cover bg-center rounded border-2 border-transparent hover:border-osblue" data-bg="https://picsum.photos/id/1019/1920/1080" style="background-image:url('https://picsum.photos/id/1019/1920/1080')"></button>
+            <button class="bg-btn h-20 bg-cover bg-center rounded border-2 border-transparent hover:border-osblue" data-bg="https://picsum.photos/id/1039/1920/1080" style="background-image:url('https://picsum.photos/id/1039/1920/1080')"></button>
+            <button class="bg-btn h-20 bg-cover bg-center rounded border-2 border-transparent hover:border-osblue" data-bg="https://picsum.photos/id/1025/1920/1080" style="background-image:url('https://picsum.photos/id/1025/1920/1080')"></button>
+            <button class="bg-btn h-20 bg-cover bg-center rounded border-2 border-transparent hover:border-osblue" data-bg="https://picsum.photos/id/1040/1920/1080" style="background-image:url('https://picsum.photos/id/1040/1920/1080')"></button>
+            <button class="bg-btn h-20 bg-cover bg-center rounded border-2 border-transparent hover:border-osblue" data-bg="https://picsum.photos/id/1035/1920/1080" style="background-image:url('https://picsum.photos/id/1035/1920/1080')"></button>
+          </div>
+        </div>
+        <div class="mb-4">
+          <label class="block text-sm font-medium mb-2 text-gray-700">主题模式</label>
+          <div class="flex gap-3">
+            <button class="theme-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border-2 bg-white text-gray-700" data-theme="light"><i class="fa fa-sun-o text-yellow-500"></i><span>浅色</span></button>
+            <button class="theme-btn flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg border-2 bg-gray-800 text-white" data-theme="dark"><i class="fa fa-moon-o text-blue-300"></i><span>深色</span></button>
+          </div>
+        </div>
+        <div>
+          <label class="block text-sm font-medium mb-2 text-gray-700">缩放 (100% - 150%)</label>
+          <input type="range" min="100" max="150" step="10" value="100" class="w-full st-scale">
+        </div>
+      </div>
+      <div class="border border-gray-200 rounded p-4">
+        <h3 class="font-semibold mb-3 text-gray-800">声音</h3>
+        <div class="flex justify-between mb-2"><label class="text-sm text-gray-700">音量</label><span class="st-vol text-sm text-gray-700">75%</span></div>
+        <input type="range" min="0" max="100" value="75" class="w-full st-volrange">
+      </div>
+      <div class="border border-gray-200 rounded p-4">
+        <h3 class="font-semibold mb-3 text-gray-800">关于</h3>
+        <p class="text-sm text-gray-600">Menmo OS β2u8 — 纯 HTML/CSS/JS 实现的模拟操作系统，采用 src 工程化结构（index.html + css + js）。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 回收站 -->
+  <div id="tpl-recyclebin">
+    <div class="flex h-full flex-col">
+      <div class="flex items-center gap-2 p-2 border-b border-gray-200 bg-gray-50 shrink-0">
+        <button class="rb-restore os-btn px-3 h-8 flex items-center gap-1.5 rounded text-sm bg-gray-200 hover:bg-gray-300"><i class="fa fa-undo"></i> 还原</button>
+        <button class="rb-empty os-btn px-3 h-8 flex items-center gap-1.5 rounded text-sm bg-red-50 text-red-600 hover:bg-red-100"><i class="fa fa-trash"></i> 清空</button>
+      </div>
+      <div class="rb-files flex-1 overflow-auto scroll-w p-3"></div>
+    </div>
+  </div>
+
+  <!-- 画图 -->
+  <div id="tpl-paint">
+    <div class="flex h-full flex-col">
+      <div class="flex flex-wrap items-center gap-2 p-2 border-b border-gray-200 bg-gray-50 shrink-0">
+        <div class="flex items-center gap-1" id="paintColors"></div>
+        <div class="h-6 w-px bg-gray-300 mx-1"></div>
+        <select class="pt-tool text-sm border border-gray-300 rounded px-2 py-1">
+          <option value="brush">画笔</option><option value="eraser">橡皮</option><option value="line">直线</option><option value="rect">矩形</option>
+        </select>
+        <input type="range" min="2" max="40" value="6" class="w-24 pt-size">
+        <div class="h-6 w-px bg-gray-300 mx-1"></div>
+        <button class="pt-clear os-btn px-2.5 py-1 rounded text-sm bg-gray-200 hover:bg-gray-300"><i class="fa fa-eraser"></i></button>
+        <button class="pt-download os-btn px-2.5 py-1 rounded text-sm bg-gray-200 hover:bg-gray-300"><i class="fa fa-download"></i></button>
+      </div>
+      <canvas class="pt-canvas flex-1 bg-white cursor-crosshair" width="800" height="560"></canvas>
+    </div>
+  </div>
+
+  <!-- 时钟 -->
+  <div id="tpl-clock">
+    <div class="flex h-full flex-col">
+      <div class="flex items-center gap-1 p-2 border-b border-gray-200 bg-gray-50 shrink-0">
+        <button class="clk-tab os-btn px-4 py-1.5 rounded text-sm" data-tab="analog">时钟</button>
+        <button class="clk-tab os-btn px-4 py-1.5 rounded text-sm" data-tab="stopwatch">秒表</button>
+        <button class="clk-tab os-btn px-4 py-1.5 rounded text-sm" data-tab="timer">计时器</button>
+        <button class="clk-tab os-btn px-4 py-1.5 rounded text-sm" data-tab="alarm">闹钟</button>
+      </div>
+      <div class="clk-pane flex-1 flex items-center justify-center">
+        <div class="clk-content w-full h-full"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 扫雷 -->
+  <div id="tpl-minesweeper">
+    <div class="flex h-full flex-col p-3">
+      <div class="flex items-center gap-2 mb-3">
+        <button class="ms-diff os-btn px-3 py-1.5 rounded text-sm bg-gray-200 hover:bg-gray-300" data-lvl="8">初级</button>
+        <button class="ms-diff os-btn px-3 py-1.5 rounded text-sm bg-gray-200 hover:bg-gray-300" data-lvl="16">中级</button>
+        <button class="ms-diff os-btn px-3 py-1.5 rounded text-sm bg-gray-200 hover:bg-gray-300" data-lvl="30">高级</button>
+        <div class="ml-auto flex items-center gap-3 text-sm text-gray-700">
+          <span><i class="fa fa-flag text-red-500"></i> <b class="ms-flags">0</b></span>
+          <span><i class="fa fa-clock-o"></i> <b class="ms-time">0</b></span>
+        </div>
+      </div>
+      <div class="flex-1 flex items-start justify-center overflow-auto scroll-w"><div class="ms-grid grid gap-0.5" style="border:3px solid #999; padding:3px; background:#bdbdbd;"></div></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ===== Toast ===== -->
+<div id="toast" class="hidden fixed bottom-16 left-1/2 -translate-x-1/2 z-[800] px-5 py-2.5 rounded-lg text-sm text-white shadow-win" style="background:rgba(32,32,32,.92)"></div>
+
+<script src="src/js/core.js"></script>
+<script src="src/js/apps.js"></script>
+<script src="src/js/games.js"></script>
+</body>
+</html>

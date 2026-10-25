@@ -1,0 +1,69 @@
+/* ===== Menmo OS β2u8 样式 ===== */
+:root{ --acc:#00b7a3; --taskbar-h:48px; }
+*{ -webkit-tap-highlight-color:transparent; box-sizing:border-box; }
+html,body{ height:100%; margin:0; }
+body{ overflow:hidden; font-family:"Segoe UI","Microsoft YaHei",system-ui,sans-serif; user-select:none; background-color:#0b1b2b; }
+.scroll-w{ scrollbar-width:thin; scrollbar-color:#888 #f0f0f0; }
+.scroll-w::-webkit-scrollbar{ width:9px; height:9px; }
+.scroll-w::-webkit-scrollbar-track{ background:#f0f0f0; }
+.scroll-w::-webkit-scrollbar-thumb{ background:#b8b8b8; border-radius:5px; }
+.scroll-w::-webkit-scrollbar-thumb:hover{ background:#8a8a8a; }
+.textshadow{ text-shadow:0 1px 3px rgba(0,0,0,.55); }
+.os-btn{ transition:background .1s,color .1s; cursor:pointer; }
+.desktop-icon{ transition:background .1s; }
+.desktop-icon:hover{ background:rgba(255,255,255,.14); }
+.desktop-icon:active{ background:rgba(255,255,255,.22); }
+.task-icon{ transition:background .12s; position:relative; }
+.task-icon:hover{ background:rgba(255,255,255,.14); }
+.task-icon.active{ background:rgba(255,255,255,.22); }
+.task-icon.active::after{ content:''; position:absolute; bottom:2px; left:30%; right:30%; height:3px; border-radius:2px; background:#fff; }
+@keyframes bootbar{ from{width:0} to{width:100%} }
+#bootBar{ animation:bootbar 1.4s cubic-bezier(.4,0,.2,1) forwards; }
+@keyframes fadein{ from{opacity:0} to{opacity:1} }
+@keyframes popin{ from{opacity:0; transform:scale(.96)} to{opacity:1; transform:scale(1)} }
+@keyframes winopen{ from{opacity:0; transform:scale(.92)} to{opacity:1; transform:scale(1)} }
+.fadein{ animation:fadein .35s ease forwards; }
+.popin{ animation:popin .18s ease forwards; }
+.window-open{ animation:winopen .16s ease forwards; }
+.wnd.minimized{ display:none !important; }
+@keyframes toastin{ from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:translateY(0)} }
+#toast{ animation:toastin .25s ease forwards; }
+.context-menu-item{ transition:background .1s; }
+.context-menu-item:hover{ background:rgba(0,120,215,.1); }
+.ctx-sep{ height:1px; background:#e2e2e2; margin:4px 8px; }
+input[type=range]{ accent-color:var(--acc); }
+input, textarea{ font-size:16px !important; }
+.file-cell{ transition:background .12s; }
+.file-cell:hover{ background:rgba(0,120,215,.12); }
+.file-cell.selected{ background:rgba(0,120,215,.28); }
+.mine-cell{ transition:background .1s; }
+
+/* ===== 窗口缩放手柄 ===== */
+.wnd-resize{ position:absolute; right:0; bottom:0; width:20px; height:20px; cursor:nwse-resize; touch-action:none; z-index:30; }
+.wnd-resize::after{ content:''; position:absolute; right:3px; bottom:3px; width:9px; height:9px; border-right:2px solid rgba(0,0,0,.35); border-bottom:2px solid rgba(0,0,0,.35); border-radius:0 0 3px 0; pointer-events:none; }
+body.dark .wnd-resize::after{ border-color:rgba(255,255,255,.4); }
+
+/* ===== 深色主题覆盖 ===== */
+body.dark #taskbar{ background:#161616; }
+body.dark .wnd-body{ background:#1c1c1c !important; color:#e6e6e6 !important; }
+body.dark .wnd-body::-webkit-scrollbar-track, body.dark .wnd-body ::-webkit-scrollbar-track{ background:#2a2a2a; }
+body.dark .wnd-body::-webkit-scrollbar-thumb, body.dark .wnd-body ::-webkit-scrollbar-thumb{ background:#5a5a5a; }
+body.dark .wnd-body .bg-white{ background:#1c1c1c !important; }
+body.dark .wnd-body .bg-gray-50, body.dark .wnd-body .bg-gray-100{ background:#242424 !important; }
+body.dark .wnd-body .bg-gray-200{ background:#2e2e2e !important; color:#d8d8d8 !important; }
+body.dark .wnd-body .bg-amber-100{ background:#4a3a10 !important; }
+body.dark .wnd-body .bg-amber-300{ background:#6b5400 !important; }
+body.dark .wnd-body .border-gray-100, body.dark .wnd-body .border-gray-200, body.dark .wnd-body .border-gray-300{ border-color:#3a3a3a !important; }
+body.dark .wnd-body .text-gray-800, body.dark .wnd-body .text-gray-700, body.dark .wnd-body .text-gray-600, body.dark .wnd-body .text-gray-500, body.dark .wnd-body .text-gray-400{ color:#cfcfcf !important; }
+body.dark .wnd-body .text-red-600{ color:#ff7a7a !important; }
+body.dark .wnd-body .hover\\:bg-gray-200:hover, body.dark .wnd-body .hover\\:bg-gray-300:hover{ background:#3a3a3a !important; }
+body.dark .wnd-body .hover\\:bg-gray-200:hover .fa, body.dark .wnd-body .hover\\:bg-gray-300:hover .fa{ color:#d8d8d8 !important; }
+body.dark .wnd-body input, body.dark .wnd-body select, body.dark .wnd-body textarea{ background:#2c2c2c !important; color:#e6e6e6 !important; border-color:#444 !important; }
+body.dark .wnd-body .fm-side:hover, body.dark .wnd-body .file-cell:hover{ background:rgba(255,255,255,.12) !important; color:#e6e6e6 !important; }
+body.dark .wnd-body .file-cell.selected{ background:rgba(0,120,215,.5) !important; }
+body.dark .wnd-body .theme-btn{ border-color:#444; }
+body.dark .wnd-body .c-hist{ color:#999 !important; }
+body.dark #contextMenu{ background:rgba(40,40,40,.97) !important; color:#e6e6e6 !important; border-color:rgba(255,255,255,.1); }
+body.dark #contextMenu .ctx-sep{ background:#3a3a3a; }
+body.dark .context-menu-item:hover{ background:rgba(0,120,215,.35) !important; color:#fff; }
+/* （注：内容由AI生成） */
